@@ -1,5 +1,4 @@
-0.03_04
-
+0.04 Tue Mar 22 23:34:36 CST 2005
 - Changed ->headers calling conventions. This may break backwards compat,
   but is cleaner and safer.
 - Fixed bugs in ::CGI that broke http header handling
