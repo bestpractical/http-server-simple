@@ -152,6 +152,7 @@ sub run {
     
             # Default to unencoded, raw data out.
             # if you're sending utf8 and latin1 data mixed, you may need to override this
+            binmode STDIN, ':raw';
             binmode STDOUT, ':raw';
 
 
