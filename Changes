@@ -1,3 +1,15 @@
+0.03_02 Thu Feb 17 23:34:00 NZDT 2005
+- Make test script not depend on LWP
+- Add ->header(), and various generic hook capabilities
+- Made HTTP::Server::Simple::CGI use those hooks
+- Add ->bad_request(), for protocol errors
+
+0.03_01 Thu Feb 17 21:39:34 NZDT 2005
+- Add ->setup() and ->handler()
+- Add support for specifying a host to bind listener to
+- Split out CGI.pm support into sub-class
+- Add Changes file to MANIFEST
+
 0.03 Wed Jan 26 08:55:34 EST 2005
 
 - Test fixes for Win32
