@@ -374,9 +374,13 @@ method, request URI and proto
 
 sub parse_request {
     my $self = shift;
-    defined($_ = <STDIN>)
-	or return undef;
-    chomp;
+    my $chunk;
+    while ( sysread( STDIN, my $buff, 1 ) ) {
+        last if $buff eq "\n";
+        $chunk .= $buff;
+    }
+    defined($chunk) or return undef;
+    $_ = $chunk;
 
     m/^(\w+)\s+(\S+)(?:\s+(\S+))?\r?$/;
     my $method = $1;
@@ -403,13 +407,19 @@ sub parse_headers {
 
     my @headers;
 
-    while (<STDIN>) {
-        s/[\r\l\n\s]+$//;
-        if (/^([\w\-]+): (.+)/i) {
-	    push @headers, $1 => $2;
+    my $chunk = '';
+    while ( sysread( STDIN, my $buff, 1 ) ) {
+        if ( $buff eq "\n" ) {
+            $chunk =~ s/[\r\l\n\s]+$//;
+            if ( $chunk =~ /^([\w\-]+): (.+)/i ) {
+                push @headers, $1 => $2;
+            }
+            last if ( $chunk =~ /^$/ );
+            $chunk = '';
         }
-        last if (/^$/);
+        else { $chunk .= $buff }
     }
+
     return(\@headers);
 }
 
