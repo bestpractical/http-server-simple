@@ -19,3 +19,4 @@ t/00smoke.t
 t/01live.t
 t/02pod.t
 t/03podcoverage.t
+t/04cgi.t

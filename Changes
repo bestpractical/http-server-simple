@@ -1,3 +1,7 @@
+0.08
+
+- New tests for HTTP::Server:Simple::CGI from hide.
+
 0.07 Sat Mar 26 14:25:38 CST 2005
 
 - PAUSE broke :/
