@@ -159,84 +159,129 @@ start listening for http requests.
 
 =cut
 
+my $server_class_id = 0;
 sub run {
+    my $self    = shift;
+    my $server  = $self->net_server;
+
+    # $pkg is generated anew for each invocation to "run"
+    # Just so we can use different net_server() implementations
+    # in different runs.
+    my $pkg     = join '::', ref($self), "NetServer".$server_class_id++;
+
+    no strict 'refs';
+    *{"$pkg\::process_request"} = $self->_process_request;
+
+    if ($server) {
+        require join('/', split /::/, $server).'.pm';
+        *{"$pkg\::ISA"} = [$server];
+        $self->print_banner;
+    }
+    else {
+        $self->setup_listener;
+        *{"$pkg\::run"} = $self->_default_run;
+    }
+
+    $pkg->run(port => $self->port);
+}
+
+=head2 net_server
+
+User-overridable method. If you set it to a C<Net::Server> subclass,
+that subclass is used for the C<run> method.  Otherwise, a minimal 
+implementation is used as default.
+
+=cut
+
+sub net_server { undef }
+
+sub _default_run {
     my $self = shift;
 
-    $self->setup_listener;
+    # Default "run" closure method for a stub, minimal Net::Server instance.
+    sub {
+        my $pkg = shift;
 
-    $self->print_banner;
+        $self->print_banner;
 
-    while (1) {
+        while (1) {
+            for ( ; accept( Remote, HTTPDaemon ) ; close Remote ) {
+                $self->stdio_handle(\*Remote);
+                $self->accept_hook if $self->can("accept_hook");
 
-        for ( ; accept( Remote, HTTPDaemon ) ; close Remote ) {
+                *STDIN  = $self->stdio_handle();
+                *STDOUT = $self->stdio_handle();
+                $pkg->process_request;
+            }
+        }    
+    }
+}
 
-            $self->stdio_handle(\*Remote);
+sub _process_request {
+    my $self = shift;
 
-	    $self->accept_hook if $self->can("accept_hook");
+    # Create a callback closure that is invoked for each incoming request;
+    # the $self above is bound into the closure.
+    sub {
+        $self->stdio_handle(*STDIN);
 
-            *STDIN  = $self->stdio_handle();
-            *STDOUT = $self->stdio_handle();
-    
-            # Default to unencoded, raw data out.
-            # if you're sending utf8 and latin1 data mixed, you may need to override this
-            binmode STDIN, ':raw';
-            binmode STDOUT, ':raw';
+        # Default to unencoded, raw data out.
+        # if you're sending utf8 and latin1 data mixed, you may need to override this
+        binmode STDIN, ':raw';
+        binmode STDOUT, ':raw';
 
+        my $remote_sockaddr = getpeername(STDIN);
+        my ( undef, $iaddr ) = sockaddr_in($remote_sockaddr);
+        my $peername = gethostbyaddr( $iaddr, AF_INET ) || "localhost";
 
-            my $remote_sockaddr = getpeername(STDIN);
-            my ( undef, $iaddr ) = sockaddr_in($remote_sockaddr);
-            my $peername = gethostbyaddr( $iaddr, AF_INET ) || "localhost";
+        my $peeraddr = inet_ntoa($iaddr) || "127.0.0.1";
 
-            my $peeraddr = inet_ntoa($iaddr) || "127.0.0.1";
+        my $local_sockaddr = getsockname(STDIN);
+        my ( undef, $localiaddr ) = sockaddr_in($local_sockaddr);
+        my $localname = gethostbyaddr( $localiaddr, AF_INET )
+            || "localhost";
+        my $localaddr = inet_ntoa($localiaddr) || "127.0.0.1";
 
-            my $local_sockaddr = getsockname(STDIN);
-            my ( undef, $localiaddr ) = sockaddr_in($local_sockaddr);
-            my $localname = gethostbyaddr( $localiaddr, AF_INET )
-              || "localhost";
-            my $localaddr = inet_ntoa($localiaddr) || "127.0.0.1";
+        my ( $method, $request_uri, $proto ) =
+            $self->parse_request
+                or do {$self->bad_request; return};
 
-            my ( $method, $request_uri, $proto ) =
-		$self->parse_request
-		    or do {$self->bad_request; next};
+        $proto ||= "HTTP/0.9";
 
-	    $proto ||= "HTTP/0.9";
+        my ( $file, $query_string ) =
+            ( $request_uri =~ /([^?]*)(?:\?(.*))?/ );    # split at ?
 
-            my ( $file, $query_string ) =
-              ( $request_uri =~ /([^?]*)(?:\?(.*))?/ );    # split at ?
+        if ( $method !~ /^(?:GET|POST|HEAD)$/ ) {
+            $self->bad_request;
+            return;
+        }
 
-            $self->bad_request, next
-		if ( $method !~ /^(GET|POST|HEAD)$/ );
+        $self->setup(
+            method       => $method,
+            protocol     => $proto,
+            query_string => ( $query_string || '' ),
+            request_uri  => $request_uri,
+            path         => $file,
+            localname    => $localname,
+            localport    => $self->port,
+            peername     => $peername,
+            peeraddr     => $peeraddr,
+        );
 
-            $self->setup(
-                method       => $method,
-                protocol     => $proto,
-                query_string => ( $query_string || '' ),
-                request_uri  => $request_uri,
-                path         => $file,
-                localname    => $localname,
-                localport    => $self->port,
-                peername     => $peername,
-                peeraddr     => $peeraddr,
-            );
+        # HTTP/0.9 didn't have any headers (I think)
+        if ( $proto =~ m{HTTP/(\d(\.\d)?)$} and $1 >= 1 ) {
 
-	    # HTTP/0.9 didn't have any headers (I think)
-	    if ( $proto =~ m{HTTP/(\d(\.\d)?)$} and $1 >= 1 ) {
+            my $headers = $self->parse_headers
+                or do{$self->bad_request; return};
 
-		my $headers = $self->parse_headers
-		    or do{$self->bad_request; next};
-
-		$self->headers( $headers) ;
-
-	    }
-
-	    $self->post_setup_hook if $self->can("post_setup_hook");
-
-            $self->handler;
+            $self->headers( $headers) ;
 
         }
 
-    }
+        $self->post_setup_hook if $self->can("post_setup_hook");
 
+        $self->handler;
+    }
 }
 
 

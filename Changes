@@ -1,3 +1,7 @@
+- New public subclass-overridable method ->net_server() that can
+  optionally take a Net::Server subclass name and use it to replace
+  the default ->run() method.
+
 0.04 Tue Mar 22 23:34:36 CST 2005
 - Changed ->headers calling conventions. This may break backwards compat,
   but is cleaner and safer.
