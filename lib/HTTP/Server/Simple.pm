@@ -149,6 +149,11 @@ sub run {
 
             *STDIN  = *Remote;
             *STDOUT = *Remote;
+    
+            # Default to unencoded, raw data out.
+            # if you're sending utf8 and latin1 data mixed, you may need to override this
+            binmode STDOUT, ':raw';
+
 
             my $remote_sockaddr = getpeername(STDIN);
             my ( undef, $iaddr ) = sockaddr_in($remote_sockaddr);
