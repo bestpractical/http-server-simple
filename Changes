@@ -1,6 +1,10 @@
+0.05 Sat Mar 26 14:14:54 CST 2005
+
+- Fix a bug in HTTP::Server::Simple::CGI that clobbered CGI ENV variables
+  in some cases. Thanks, Hide.
 - New public subclass-overridable method ->net_server() that can
   optionally take a Net::Server subclass name and use it to replace
-  the default ->run() method.
+  the default ->run() method. -- Autrijus Tang
 
 0.04 Tue Mar 22 23:34:36 CST 2005
 - Changed ->headers calling conventions. This may break backwards compat,

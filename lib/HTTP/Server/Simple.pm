@@ -342,14 +342,6 @@ of keys of this list.
   peername     Remote name           "200.2.4.5", "foo.com"
   peeraddr     Remote address        "200.2.4.5", "::1"
   localname    Local interface       "localhost", "myhost.com"
-  headers      All HTTP/1.0+ headers  (see below)
-
-The C<headers> method contains I<all> HTTP headers, in order, without
-being parsed.  It is up to the sub-class to either grok them or ignore
-them.
-
-Note that if the client is a HTTP/0.9 client, then there will be no
-headers at all.
 
 =cut
 
