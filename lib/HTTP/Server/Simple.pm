@@ -87,7 +87,9 @@ sub new {
     my $class = ref($proto) || $proto;
 
     if ( $class eq __PACKAGE__ ) {
-	warn "HTTP::Server::Simple called directly - using CGI version";
+        warn "HTTP::Server::Simple is an abstract base class\n";
+        warn "Direct use of this module is deprecated\n";
+        warn "Upgrading this object to an HTTP::Server::Simple::CGI object\n";
 	require HTTP::Server::Simple::CGI;
 	return HTTP::Server::Simple::CGI->new(@_[1..$#_]);
     }
@@ -168,10 +170,12 @@ sub run {
 
         for ( ; accept( Remote, HTTPDaemon ) ; close Remote ) {
 
+            $self->stdio_handle(\*Remote);
+
 	    $self->accept_hook if $self->can("accept_hook");
 
-            *STDIN  = *Remote;
-            *STDOUT = *Remote;
+            *STDIN  = $self->stdio_handle();
+            *STDOUT = $self->stdio_handle();
     
             # Default to unencoded, raw data out.
             # if you're sending utf8 and latin1 data mixed, you may need to override this
@@ -233,6 +237,23 @@ sub run {
 
     }
 
+}
+
+
+=head2 stdio_handle [FILEHANDLE]
+
+When called with an argument, sets the server's filehandle to that arg.
+
+Returns the server's filehandle
+
+=cut
+
+
+
+sub stdio_handle {
+    my $self = shift;
+    $self->{'_stdio_handle'} = shift if (@_);
+    return $self->{'_stdio_handle'};
 }
 
 =head1 IMPORTANT SUB-CLASS METHODS
@@ -383,9 +404,9 @@ sub parse_request {
     $_ = $chunk;
 
     m/^(\w+)\s+(\S+)(?:\s+(\S+))?\r?$/;
-    my $method = $1;
-    my $uri = $2;
-    my $protocol = $3;
+    my $method = $1 || '';
+    my $uri = $2 || '';
+    my $protocol = $3 || '';
 
     return($method, $uri, $protocol);
 }
@@ -472,10 +493,10 @@ sub bad_request {
 
 =head1 AUTHOR
 
-Copyright (c) 2004-2005 Jesse Vincent, jesse@bestpractical.com.
+Copyright (c) 2004-2005 Jesse Vincent, <jesse@bestpractical.com>.
 All rights reserved.
 
-Marcu Ramberg contributed tests, cleanup, etc
+Marcus Ramberg <drave@thefeed.no> contributed tests, cleanup, etc
 
 Sam Vilain, <samv@cpan.org> contributed the CGI.pm split-out and
 header/setup API.
