@@ -1,3 +1,7 @@
+0.03_03 Fri Mar 18 15:09:52 EST 2005
+- Finish fixes from http://rt.cpan.org/NoAuth/Bug.html?id=11409
+
+
 0.03_02 Thu Feb 17 23:34:00 NZDT 2005
 - Make test script not depend on LWP
 - Add ->header(), and various generic hook capabilities

@@ -5,7 +5,7 @@ use warnings;
 use Socket;
 use Carp;
 
-our $VERSION = '0.03_02';
+our $VERSION = '0.03_03';
 
 =head1 NAME
 
@@ -113,15 +113,19 @@ Run the server in the background. returns pid.
 =cut
 
 sub background {
-    my $self=shift;
-    my $child =fork ;
+    my $self  = shift;
+    my $child = fork;
     die "Can't fork: $!" unless defined($child);
     return $child if $child;
     use POSIX;
-    POSIX::setsid()
-        or die "Can't start a new session: $!";
+
+    if ( $^O !~ /MSWin32/ ) {
+        POSIX::setsid()
+          or die "Can't start a new session: $!";
+    }
     $self->run();
 }
+
 
 =head2 run
 
