@@ -14,26 +14,28 @@ not run its Makefile.PL or Build.PL.
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-SHA1 3f2b41f04ab4bcf4bf66ae0b7807a9ec227b9650 MANIFEST
-SHA1 f5f9e9464e5ebd54b5d91e3a3debba18f2994d52 META.yml
+SHA1 d04d371c5a4a9639ddfbf6b16ee7984d78c76f6b MANIFEST
+SHA1 7e3a84651b5d78ff8eb12603714749023eb017a6 META.yml
 SHA1 490f3fd115e09cb05b725580e5ed5cdd58241049 Makefile.PL
 SHA1 ed0c107672daac3bc9e266876666e1059dbe44b7 README
 SHA1 61dac0d5f7c81522d856b2d8608538ba34fb1247 ex/sample_server
-SHA1 0de53a33616127f8680e6e4118741e80f354cd3e inc/Module/Install.pm
-SHA1 11d43fa1484b63eb90b0a3a1b62dcb7e71060084 inc/Module/Install/Base.pm
-SHA1 d3122b9f825c49da1184636699531ac0a7844da0 inc/Module/Install/Can.pm
-SHA1 9f146b26e914b78d7f07559d1810bca6d96c2bc7 inc/Module/Install/Fetch.pm
-SHA1 836dc65ebcb2913f5a7da77ddba4b6d46bd98f99 inc/Module/Install/Makefile.pm
-SHA1 2d0fae3f1ecf71666075b39911cb4694b1310edd inc/Module/Install/Metadata.pm
-SHA1 71c0f2e04d98c302c22d92b03ab8852f768b6431 inc/Module/Install/Win32.pm
-SHA1 ea6fe523768b5c7d8a50528fbc18885bb0901d88 inc/Module/Install/WriteAll.pm
-SHA1 7d0456d8888bb90c38c3bbd8d91e12071e65753c lib/HTTP/Server/Simple.pm
-SHA1 bae9d5536239ed37b06ebb2b32ae8602e57c7c14 perltidy.ERR
-SHA1 d1122c872f0f38b04ceebd655257261ef4db692f t/00smoke.t
+SHA1 05d89e1fe6d49cd518b5a3e6694cc313e655fb02 inc/Module/Install.pm
+SHA1 2e300b145ee61eea9dfd71624b17b0bc9218aa4f inc/Module/Install/Base.pm
+SHA1 29ce36027266c1839b496bf660396e0a91ab53cf inc/Module/Install/Can.pm
+SHA1 c0f347c388074beb42aad080661c7e3552110c71 inc/Module/Install/Fetch.pm
+SHA1 e094fe96aef06c68d7a424818c12e52b11f1ccdd inc/Module/Install/Makefile.pm
+SHA1 e448c6dc5351ef425e3f8bdbeb642409120bc3ca inc/Module/Install/Metadata.pm
+SHA1 134de6ff2f762873b6a1af950dd53f8e0a801d73 inc/Module/Install/Win32.pm
+SHA1 1ec06df292af7f652d33db6129e9e4c7cc8b5095 inc/Module/Install/WriteAll.pm
+SHA1 528c71d9e304d9b678b021010fd86bd41fcc6fe9 lib/HTTP/Server/Simple.pm
+SHA1 db064af54cab345a71daec576e32e64b8fb1033d t/00smoke.t
+SHA1 035da25add4957dc42a88de31a5af2ebf85c56d3 t/01live.t
+SHA1 aca95653cfce68912e08c57b3a4566207e2f99b3 t/02pod.t
+SHA1 90f0be3e6b0fab021155953742f5cc5c5e47a5aa t/03podcoverage.t
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.2.4 (Darwin)
+Version: GnuPG v1.2.5 (GNU/Linux)
 
-iD8DBQFBg/F7Ei9d9xCOQEYRAt8sAJ9m+32vUDPFL+ES26DVLOh4/4L3rQCgx6GW
-V15HZ9WfgjxrbYauPz6bpTM=
-=gKXl
+iD8DBQFB3c7cEi9d9xCOQEYRArKwAKC5XqDRQYnPnEch4tv/3oo4jtLy+wCgvKL+
+LmpuOFGenlgk5Jw7qvmVA8U=
+=dywW
 -----END PGP SIGNATURE-----

@@ -1,12 +1,13 @@
 package HTTP::Server::Simple;
-
+use 5.006;
 use strict;
 use warnings;
 use Socket;
-use CGI;
+use CGI ();
 
-our $VERSION = '0.00_01';
+my %clean_env=%ENV;
 
+our $VERSION = '0.02';
 
 =head1 NAME
 
@@ -43,11 +44,11 @@ It does, however, act as a simple frontend which can turn a CGI into a standalon
 
 
 sub new {
-    my $proto = shift;
+    my ($proto,$port) = @_;
     my $class = ref($proto) || $proto;
     my $self  = {};
     bless( $self, $class );
-    $self->port('8080');
+    $self->port( $port || '8080');
     return $self;
 }
 
@@ -65,6 +66,24 @@ sub port {
     return ( $self->{'port'} );
 
 }
+
+=head2 background
+
+Run the server in the background. returns pid. 
+
+
+=cut
+
+sub background {
+    my $self=shift;
+    my $child =fork ;
+    die "Can't fork: $!" unless defined($child);
+    return $child if $child;
+    use POSIX;
+    POSIX::setsid()
+        or die "Can't start a new session: $!";
+    $self->run();
+} 
 
 =head2 run
 
@@ -119,7 +138,6 @@ sub run {
                 request_uri  => $request_uri
             );
 
-            print "HTTP/1.0 200 OK\n";    # probably OK by now
 
             my $cgi = CGI->new();
 
@@ -141,10 +159,12 @@ This routine is called whenever your server gets a request it can handle. It's c
 
 
 sub handle_request {
-    my $self = shift;
-    my $cgi  = shift;
+    my ( $self, $cgi ) = @_;
 
+    print "HTTP/1.0 200 OK\n";    # probably OK by now
     print <<EOF;
+	   Content-Type: text/html
+	   Content-Lenght: 31337
 
           <html><head><title>Hello!</title></head>
           <h1>Congratulations!</h1>
@@ -201,12 +221,8 @@ sub build_cgi_env {
         @_
     );
 
-    foreach my $var qw(USER_AGENT CONTENT_LENGTH CONTENT_TYPE
-      COOKIE SERVER_PORT SERVER_PROTOCOL SERVER_NAME
-      PATH_INFO REQUEST_URI REQUEST_METHOD REMOTE_ADDR
-      REMOTE_HOST QUERY_STRING SERVER_SOFTWARE) {
-        delete $ENV{$var};
-      } while (<STDIN>) {
+    %ENV=%clean_env;
+    while (<STDIN>) {
         s/[\r\l\n\s]+$//;
         if (/^([\w\-]+): (.+)/i) {
             my $tag = uc($1);
@@ -214,17 +230,17 @@ sub build_cgi_env {
             my $val = $2;
             $tag =~ s/-/_/g;
             $tag = "HTTP_" . $tag
-              unless ( grep /^$tag$/, qw(CONTENT_LENGTH CONTENT_TYPE COOKIE) );
+              unless ( grep /^$tag$/, qw(CONTENT_LENGTH CONTENT_TYPE) );
             if ( $ENV{$tag} ) {
                 $ENV{$tag} .= "; $val";
-            }
-            else {
+            } else {
                 $ENV{$tag} = $val;
             }
         }
         last if (/^$/);
     }
 
+    no warnings 'uninitialized';
     $ENV{SERVER_PROTOCOL} = $args{protocol};
     $ENV{SERVER_PORT}     = $args{port};
     $ENV{SERVER_NAME}     = $args{'localname'};
@@ -260,9 +276,11 @@ sub print_banner {
 
 =head1 AUTHOR
 
-Copyright (c) 2001-2004 Jesse Vincent, jesse@bestpractical.com.
-
+Copyright (c) 2004-2005 Jesse Vincent, jesse@bestpractical.com.
 All rights reserved.
+
+Marcu Ramberg contributed tests, cleanup, etc
+
 
 
 =head1 BUGS
