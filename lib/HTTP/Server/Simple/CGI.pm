@@ -45,7 +45,6 @@ sub post_setup_hook{
 
     $ENV{SERVER_URL} ||=
 	("http://".$ENV{SERVER_NAME}.":".$ENV{SERVER_PORT}."/");
-
     CGI::initialize_globals();
 }
 
@@ -84,7 +83,7 @@ sub setup {
 
 =head2  headers
 
-This method sets up the process environment in icky-CGI style based on
+This method sets up the process environment in CGI style based on
 the HTTP input headers.
 
 =cut
@@ -93,7 +92,8 @@ sub headers {
     my $self = shift;
     my $headers = shift;
 
-    while ( my ($tag, $value) = splice @_, 0, 2 ) {
+
+    while ( my ($tag, $value) = splice @$headers, 0, 2 ) {
 	$tag = uc($tag);
 	$tag =~ s/^COOKIES$/COOKIE/;
 	$tag =~ s/-/_/g;

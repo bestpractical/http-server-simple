@@ -192,8 +192,7 @@ sub run {
 		my $headers = $self->parse_headers
 		    or do{$self->bad_request; next};
 
-		$self->setup( headers => $headers
-			    ) if $headers;
+		$self->headers( $headers) ;
 
 	    }
 
@@ -285,9 +284,11 @@ C<headers()> in your sub-class and receive them all at once.
 
 Finally, you can define handlers to receive individual HTTP headers.
 This can be useful for very simple SOAP servers (to name a
-crack-fueled standard that defines its own special HTTP headers).  Eg,
-for a header called C<Content-Length>, you would define the method
-C<content_length()> in your sub-class.
+crack-fueled standard that defines its own special HTTP headers). 
+
+To do so, you'll want to define the C<header()> method in your subclass.
+That method will be handed a (key,value) pair of the header name and the value.
+
 
 =cut
 
@@ -299,14 +300,6 @@ sub headers {
     while ( my ($header, $value) = splice @$headers, 0, 2 ) {
 	if ( $can_header ) {
 	    $self->header($header => $value)
-	} else {
-	    (my $method = lc($header)) =~ s{-}{_}g;
-
-	    # FIXME - security - this is probably very dangerous
-	    # and probably OTT
-	    $self->$method($value)
-		if !defined &$method  # stop really dumb stuff
-		    and $self->can($method);
 	}
     }
 }
@@ -344,6 +337,7 @@ sub print_banner {
 
 Parse the HTTP request line.
 
+Returns three values, the request method, request URI and the protocol
 Sub-classed versions of this should return three values - request
 method, request URI and proto
 
@@ -354,12 +348,18 @@ sub parse_request {
     defined($_ = <STDIN>)
 	or return undef;
     chomp;
-    m/^(\w+)\s+(\S+)(?:\s+(\S+))?\r?$/
+
+    m/^(\w+)\s+(\S+)(?:\s+(\S+))?\r?$/;
+    my $method = $1;
+    my $uri = $2;
+    my $protocol = $3;
+
+    return($method, $uri, $protocol);
 }
 
 =head2 parse_headers
 
-Parse extra RFC822-style headers with the request.
+Parse incoming HTTP headers from STDIN.
 
 Remember, this is a B<simple> HTTP server, so nothing intelligent is
 done with them C<:-)>.
@@ -381,7 +381,7 @@ sub parse_headers {
         }
         last if (/^$/);
     }
-    \@headers;
+    return(\@headers);
 }
 
 
@@ -400,9 +400,16 @@ sub setup_listener {
     setsockopt( HTTPDaemon, SOL_SOCKET, SO_REUSEADDR, pack( "l", 1 ) )
       or warn "setsockopt: $!";
     bind( HTTPDaemon,
-	  sockaddr_in( $self->port(), ( $self->host ? inet_aton($self->host)
-					: INADDR_ANY ) ) )
-	or die "bind: $!";
+        sockaddr_in(
+            $self->port(),
+            (
+                $self->host
+                ? inet_aton( $self->host )
+                : INADDR_ANY
+            )
+        )
+      )
+      or die "bind: $!";
     listen( HTTPDaemon, SOMAXCONN ) or die "listen: $!";
 
 }
