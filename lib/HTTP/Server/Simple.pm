@@ -58,6 +58,29 @@ until you call C<-E<gt>run()>.
 
 =cut
 
+# Handle SIGHUP
+
+$SIG{CHLD} = 'IGNORE'; # reap child processes
+$SIG{HUP} = sub {
+    # on a "kill -HUP", we first close our socket handles.
+    close Remote;
+    close HTTPDaemon;
+
+    # and then, on systems implementing fork(), we make sure
+    # we are running with a new pid, so another -HUP will still
+    # work on the new process.
+    require Config;
+    if ($Config::Config{d_fork} and my $pid = fork()) {
+        # finally, allow ^C on the parent process to terminate
+        # the children.
+        waitpid($pid, 0); exit;
+    }
+
+    # do the exec. if $0 is not executable, try running it with $^X.
+    exec { $0 } ( ((-x $0) ? () : ($^X)), $0, @ARGV );
+};
+
+
 
 sub new {
     my ($proto,$port) = @_;
