@@ -98,7 +98,7 @@ sub headers {
 	$tag =~ s/^COOKIES$/COOKIE/;
 	$tag =~ s/-/_/g;
 	$tag = "HTTP_" . $tag
-	    unless $tag =~ m/^CONTENT_(?:LENGTH|TYPE)$/;
+	    unless $tag =~ m/^(?:CONTENT_(?:LENGTH|TYPE)|COOKIE)$/;
 
 	if ( exists $ENV{$tag} ) {
 	    $ENV{$tag} .= "; $value";
