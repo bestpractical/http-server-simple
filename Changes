@@ -1,3 +1,7 @@
+0.07 Sat Mar 26 14:25:38 CST 2005
+
+- PAUSE broke :/
+
 0.05 Sat Mar 26 14:14:54 CST 2005
 
 - Fix a bug in HTTP::Server::Simple::CGI that clobbered CGI ENV variables
