@@ -153,11 +153,11 @@ __DATA__
   <body>
     <h1>Congratulations!</h1>
 
-    <p>You now have a functional HTTP::Server::Simple running.
+    <p>You now have a functional HTTP::Server::Simple::CGI running.
       </p>
 
     <p><i>(If you're seeing this page, it means you haven't subclassed
-      HTTP::Server::Simple, which you'll need to do to make it
+      HTTP::Server::Simple::CGI, which you'll need to do to make it
       useful.)</i>
       </p>
   </body>
