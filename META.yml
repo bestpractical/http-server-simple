@@ -1,0 +1,12 @@
+name: HTTP-Server-Simple
+version: 0.08
+license: perl
+distribution_type: module
+requires:
+  Socket: 0
+  Test::More: 0
+  CGI: 0
+no_index:
+  directory:
+    - inc
+generated_by: Module::Install version 0.36
