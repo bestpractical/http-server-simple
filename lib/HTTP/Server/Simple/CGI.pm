@@ -31,7 +31,8 @@ start-up state.
 
 sub accept_hook {
     %ENV= ( %clean_env,
-	    SERVER_SOFTWARE => "HTTP::Server::Simple/$VERSION"
+	    SERVER_SOFTWARE => "HTTP::Server::Simple/$VERSION",
+            GATEWAY_INTERFACE => 'CGI/1.1'
 	  );
 }
 
