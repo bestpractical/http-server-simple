@@ -209,8 +209,9 @@ sub _default_run {
                 $self->stdio_handle(\*Remote);
                 $self->accept_hook if $self->can("accept_hook");
 
-                *STDIN  = $self->stdio_handle();
-                *STDOUT = $self->stdio_handle();
+                *STDIN  = $self->stdin_handle();
+                *STDOUT = $self->stdout_handle();
+		select STDOUT; # required for Recorder
                 $pkg->process_request;
             }
         }    
@@ -223,20 +224,20 @@ sub _process_request {
     # Create a callback closure that is invoked for each incoming request;
     # the $self above is bound into the closure.
     sub {
-        $self->stdio_handle(*STDIN);
+        $self->stdio_handle(*STDIN) unless $self->stdio_handle;
 
         # Default to unencoded, raw data out.
         # if you're sending utf8 and latin1 data mixed, you may need to override this
         binmode STDIN, ':raw';
         binmode STDOUT, ':raw';
 
-        my $remote_sockaddr = getpeername(STDIN);
+        my $remote_sockaddr = getpeername($self->stdio_handle);
         my ( undef, $iaddr ) = sockaddr_in($remote_sockaddr);
         my $peername = gethostbyaddr( $iaddr, AF_INET ) || "localhost";
 
         my $peeraddr = inet_ntoa($iaddr) || "127.0.0.1";
 
-        my $local_sockaddr = getsockname(STDIN);
+        my $local_sockaddr = getsockname($self->stdio_handle);
         my ( undef, $localiaddr ) = sockaddr_in($local_sockaddr);
         my $localname = gethostbyaddr( $localiaddr, AF_INET )
             || "localhost";
@@ -287,19 +288,47 @@ sub _process_request {
 
 =head2 stdio_handle [FILEHANDLE]
 
-When called with an argument, sets the server's filehandle to that arg.
+When called with an argument, sets the socket to the server to that arg.
 
-Returns the server's filehandle
+Returns the socket to the server; you should only use this for actual socket-related
+calls like C<getsockname>.  If all you want is to read or write to the socket,
+you should use C<stdin_handle> and C<stdout_handle> to get the in and out filehandles
+explicitly.
 
 =cut
-
-
 
 sub stdio_handle {
     my $self = shift;
     $self->{'_stdio_handle'} = shift if (@_);
     return $self->{'_stdio_handle'};
 }
+
+=head2 stdin_handle
+
+Returns a filehandle used for input from the client.  By default, 
+returns whatever was set with C<stdio_handle>, but a subclass
+could do something interesting here (see L<HTTP::Server::Simple::Logger>).
+
+=cut
+
+sub stdin_handle {
+    my $self = shift;
+    return $self->stdio_handle;
+} 
+
+=head2 stdout_handle
+
+Returns a filehandle used for output to the client.  By default, 
+returns whatever was set with C<stdio_handle>, but a subclass
+could do something interesting here (see L<HTTP::Server::Simple::Logger>).
+
+=cut
+
+sub stdout_handle {
+    my $self = shift;
+    return $self->stdio_handle;
+} 
+
 
 =head1 IMPORTANT SUB-CLASS METHODS
 
