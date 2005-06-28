@@ -1,3 +1,8 @@
+0.10 Tue Jun 28 11:27:58 EDT 2005
+
+- Allow separate treatment of STDIN and STDOUT handles to the server.  This
+  gives support for HTTP::Server::Simple::Recorder.
+
 0.09 Tue Apr 19 21:43:31 EDT 2005
 
 - Now we set the GATEWAY_INTERFACE metavariable in H:S:S:CGI.
