@@ -3,26 +3,27 @@ use Socket;
 use strict;
 
 use constant PORT => 13432;
+my $host = gethostbyaddr(inet_aton('localhost'), AF_INET);
 
 our %methods=(
-              url => 'url: http://localhost(?:\.localdomain)?:'.PORT,
+              url => "url: http://$host:".PORT,
               path_info => 'path_info: /cgitest/path_info',
-              remote_host => 'remote_host: localhost',
-              server_name => 'server_name: localhost',
+              remote_host => "remote_host: $host",
+              server_name => "server_name: $host",
               server_port => 'server_port: '.PORT,
               server_software => 'server_software: HTTP::Server::Simple/\d+.\d+',
               request_method => 'request_method: GET',
             );
 
 our %envvars=(
-              SERVER_URL => 'SERVER_URL: http://localhost(?:\.localdomain)?:'.PORT.'/',
+              SERVER_URL => "SERVER_URL: http://$host:".PORT.'/',
               SERVER_PORT => 'SERVER_PORT: '.PORT,
               REQUEST_METHOD => 'REQUEST_METHOD: GET',
               REQUEST_URI => 'REQUEST_URI: /cgitest/REQUEST_URI',
               SERVER_PROTOCOL => 'SERVER_PROTOCOL: HTTP/1.1',
-              SERVER_NAME => 'SERVER_NAME: localhost',
+              SERVER_NAME => "SERVER_NAME: $host",
               SERVER_SOFTWARE => 'SERVER_SOFTWARE: HTTP::Server::Simple/\d+.\d+',
-              REMOTE_HOST => 'REMOTE_HOST: localhost',
+              REMOTE_HOST => "REMOTE_HOST: $host",
               REMOTE_ADDR => 'REMOTE_ADDR: 127.0.0.1',
               QUERY_STRING => 'QUERY_STRING: ',
               PATH_INFO => 'PATH_INFO: /cgitest/PATH_INFO',
