@@ -1,3 +1,8 @@
+0.13 Tue Aug  9 21:25:20 EDT 2005
+
+  Signal handlers should be 'localed', so as not to mess with others' 
+  code. -- Thanks to David Wheeler
+
 0.12 Sun Jul 17 02:14:57 EDT 2005
 
   Test suite improvements from Mattia Barbon

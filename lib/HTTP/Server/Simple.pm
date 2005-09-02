@@ -5,7 +5,7 @@ use warnings;
 use Socket;
 use Carp;
 
-our $VERSION = '0.12';
+our $VERSION = '0.13';
 
 =head1 NAME
 
@@ -60,8 +60,8 @@ until you call C<-E<gt>run()>.
 
 # Handle SIGHUP
 
-$SIG{CHLD} = 'IGNORE'; # reap child processes
-$SIG{HUP} = sub {
+local $SIG{CHLD} = 'IGNORE'; # reap child processes
+local $SIG{HUP} = sub {
     # on a "kill -HUP", we first close our socket handles.
     close Remote;
     close HTTPDaemon;
