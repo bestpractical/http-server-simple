@@ -41,6 +41,7 @@ sub accept_hook {
 sub post_setup_hook {
     my $self = shift;
     $self->setup_server_url;
+    CGI::initialize_globals();
 }
 
 =head2 setup
