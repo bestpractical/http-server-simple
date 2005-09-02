@@ -87,9 +87,6 @@ sub new {
     my $class = ref($proto) || $proto;
 
     if ( $class eq __PACKAGE__ ) {
-        warn "HTTP::Server::Simple is an abstract base class\n";
-        warn "Direct use of this module is deprecated\n";
-        warn "Upgrading this object to an HTTP::Server::Simple::CGI object\n";
 	require HTTP::Server::Simple::CGI;
 	return HTTP::Server::Simple::CGI->new(@_[1..$#_]);
     }

@@ -1,15 +1,13 @@
 
 package HTTP::Server::Simple::CGI;
 
-use base qw(HTTP::Server::Simple);
+use base qw(HTTP::Server::Simple HTTP::Server::Simple::CGI::Environment);
 use strict;
 use warnings;
 
 use CGI ();
 
 our $VERSION = $HTTP::Server::Simple::VERSION;
-
-my %clean_env=%ENV;
 
 =head1 NAME
 
@@ -30,10 +28,8 @@ start-up state.
 =cut
 
 sub accept_hook {
-    %ENV= ( %clean_env,
-	    SERVER_SOFTWARE => "HTTP::Server::Simple/$VERSION",
-            GATEWAY_INTERFACE => 'CGI/1.1'
-	  );
+    my $self = shift;
+    $self->setup_environment(@_);
 }
 
 =head2 post_setup_hook
@@ -43,10 +39,8 @@ sub accept_hook {
 =cut
 
 sub post_setup_hook {
-
-    $ENV{SERVER_URL} ||=
-	("http://".$ENV{SERVER_NAME}.":".$ENV{SERVER_PORT}."/");
-    CGI::initialize_globals();
+    my $self = shift;
+    $self->setup_server_url;
 }
 
 =head2 setup
@@ -58,62 +52,11 @@ See the docs in L<HTTP::Server::Simple> for more detail.
 
 =cut
 
-our %env_mapping =
-    ( protocol => "SERVER_PROTOCOL",
-      localport => "SERVER_PORT",
-      localname => "SERVER_NAME",
-      path => "PATH_INFO",
-      request_uri => "REQUEST_URI",
-      method => "REQUEST_METHOD",
-      peeraddr => "REMOTE_ADDR",
-      peername => "REMOTE_HOST",
-      query_string => "QUERY_STRING",
-    );
-
 sub setup {
-    no warnings 'uninitialized';
     my $self = shift;
-
-    # XXX TODO: rather than clone functionality from the base class,
-    # we should call super
-    #
-    while ( my ($item, $value) = splice @_, 0, 2 ) {
-	if ( $self->can($item) ) {
-	    $self->$item($value);
-	} 
-        if ( my $k = $env_mapping{$item} ) {
-	    $ENV{$k} = $value;
-	}
-    }
-
+    $self->setup_environment_from_metadata(@_);
 }
 
-=head2  headers
-
-This method sets up the process environment in CGI style based on
-the HTTP input headers.
-
-=cut
-
-sub headers {
-    my $self = shift;
-    my $headers = shift;
-
-
-    while ( my ($tag, $value) = splice @$headers, 0, 2 ) {
-	$tag = uc($tag);
-	$tag =~ s/^COOKIES$/COOKIE/;
-	$tag =~ s/-/_/g;
-	$tag = "HTTP_" . $tag
-	    unless $tag =~ m/^(?:CONTENT_(?:LENGTH|TYPE)|COOKIE)$/;
-
-	if ( exists $ENV{$tag} ) {
-	    $ENV{$tag} .= "; $value";
-	} else {
-	    $ENV{$tag} = $value;
-	}
-    }
-}
 
 =head2 handle_request CGI
 
