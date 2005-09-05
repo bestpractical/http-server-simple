@@ -90,7 +90,7 @@ Handler implemented as part of HTTP::Server::Simple API
 sub handler {
     my $self = shift;
     my $cgi = new CGI();
-    $self->handle_request($cgi);
+    eval {$self->handle_request($cgi) };
 }
 
 
