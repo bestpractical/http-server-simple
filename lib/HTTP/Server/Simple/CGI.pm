@@ -91,6 +91,10 @@ sub handler {
     my $self = shift;
     my $cgi = new CGI();
     eval {$self->handle_request($cgi) };
+    if ($@) { 
+        my $error = $@;
+        warn $error;
+    }
 }
 
 
