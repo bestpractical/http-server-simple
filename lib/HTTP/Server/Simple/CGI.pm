@@ -58,7 +58,6 @@ sub setup {
     $self->setup_environment_from_metadata(@_);
 }
 
-
 =head2 handle_request CGI
 
 This routine is called whenever your server gets a request it can
@@ -71,14 +70,14 @@ You want to override this method in your subclass
 =cut
 
 our $default_doc;
-$default_doc = (join "", <DATA>);
+$default_doc = ( join "", <DATA> );
 
 sub handle_request {
     my ( $self, $cgi ) = @_;
 
     print "HTTP/1.0 200 OK\r\n";    # probably OK by now
-    print "Content-Type: text/html\r\nContent-Length: ",
-	length($default_doc), "\r\n\r\n", $default_doc;
+    print "Content-Type: text/html\r\nContent-Length: ", length($default_doc),
+        "\r\n\r\n", $default_doc;
 }
 
 =head2 handler
@@ -89,14 +88,13 @@ Handler implemented as part of HTTP::Server::Simple API
 
 sub handler {
     my $self = shift;
-    my $cgi = new CGI();
-    eval {$self->handle_request($cgi) };
-    if ($@) { 
+    my $cgi  = new CGI();
+    eval { $self->handle_request($cgi) };
+    if ($@) {
         my $error = $@;
         warn $error;
     }
 }
-
 
 1;
 

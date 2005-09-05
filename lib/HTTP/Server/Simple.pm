@@ -60,39 +60,38 @@ until you call C<-E<gt>run()>.
 
 # Handle SIGHUP
 
-                             
-                             
-local $SIG{CHLD} = 'IGNORE'; # reap child processes
+local $SIG{CHLD} = 'IGNORE';    # reap child processes
 local $SIG{HUP} = sub {
     close HTTPDaemon;
+
     # and then, on systems implementing fork(), we make sure
     # we are running with a new pid, so another -HUP will still
     # work on the new process.
     require Config;
-    if ($Config::Config{d_fork} and my $pid = fork()) {
+    if ( $Config::Config{d_fork} and my $pid = fork() ) {
+
         # finally, allow ^C on the parent process to terminate
         # the children.
-        waitpid($pid, 0); exit;
+        waitpid( $pid, 0 );
+        exit;
     }
 
     # do the exec. if $0 is not executable, try running it with $^X.
-    exec { $0 } ( ((-x $0) ? () : ($^X)), $0, @ARGV );
+    exec {$0}( ( ( -x $0 ) ? () : ($^X) ), $0, @ARGV );
 };
 
-
-
 sub new {
-    my ($proto,$port) = @_;
+    my ( $proto, $port ) = @_;
     my $class = ref($proto) || $proto;
 
     if ( $class eq __PACKAGE__ ) {
-	require HTTP::Server::Simple::CGI;
-	return HTTP::Server::Simple::CGI->new(@_[1..$#_]);
+        require HTTP::Server::Simple::CGI;
+        return HTTP::Server::Simple::CGI->new( @_[ 1 .. $#_ ] );
     }
 
-    my $self  = {};
+    my $self = {};
     bless( $self, $class );
-    $self->port( $port || '8080');
+    $self->port( $port || '8080' );
     return $self;
 }
 
@@ -142,11 +141,10 @@ sub background {
 
     if ( $^O !~ /MSWin32/ ) {
         POSIX::setsid()
-          or die "Can't start a new session: $!";
+            or die "Can't start a new session: $!";
     }
     $self->run();
 }
-
 
 =head2 run
 
@@ -156,20 +154,21 @@ start listening for http requests.
 =cut
 
 my $server_class_id = 0;
+
 sub run {
-    my $self    = shift;
-    my $server  = $self->net_server;
+    my $self   = shift;
+    my $server = $self->net_server;
 
     # $pkg is generated anew for each invocation to "run"
     # Just so we can use different net_server() implementations
     # in different runs.
-    my $pkg     = join '::', ref($self), "NetServer".$server_class_id++;
+    my $pkg = join '::', ref($self), "NetServer" . $server_class_id++;
 
     no strict 'refs';
     *{"$pkg\::process_request"} = $self->_process_request;
 
     if ($server) {
-        require join('/', split /::/, $server).'.pm';
+        require join( '/', split /::/, $server ) . '.pm';
         *{"$pkg\::ISA"} = [$server];
         $self->print_banner;
     }
@@ -178,7 +177,7 @@ sub run {
         *{"$pkg\::run"} = $self->_default_run;
     }
 
-    $pkg->run(port => $self->port);
+    $pkg->run( port => $self->port );
 }
 
 =head2 net_server
@@ -189,34 +188,34 @@ implementation is used as default.
 
 =cut
 
-sub net_server { undef }
+sub net_server {undef}
 
 sub _default_run {
     my $self = shift;
 
     # Default "run" closure method for a stub, minimal Net::Server instance.
-    sub {
+    return sub {
         my $pkg = shift;
 
         $self->print_banner;
 
         while (1) {
-            local $SIG{PIPE} = 'IGNORE'; # If we don't ignore SIGPIPE, a 
-                                      # client closing the connection before we 
-                                      # finish sending will cause the server to exit
-            while ( accept( my $remote, HTTPDaemon )) {
+            local $SIG{PIPE} = 'IGNORE';    # If we don't ignore SIGPIPE, a
+                 # client closing the connection before we
+                 # finish sending will cause the server to exit
+            while ( accept( my $remote, HTTPDaemon ) ) {
                 $self->stdio_handle($remote);
                 $self->accept_hook if $self->can("accept_hook");
 
                 *STDIN  = $self->stdin_handle();
                 *STDOUT = $self->stdout_handle();
-		select STDOUT; # required for HTTP::Server::Simple::Recorder
-                               # XXX TODO glasser: why?
+                select STDOUT;   # required for HTTP::Server::Simple::Recorder
+                                 # XXX TODO glasser: why?
                 $pkg->process_request;
                 close $remote;
             }
-        }    
-    }
+        }
+    };
 }
 
 sub _process_request {
@@ -228,31 +227,30 @@ sub _process_request {
 
         $self->stdio_handle(*STDIN) unless $self->stdio_handle;
 
-        # Default to unencoded, raw data out.
-        # if you're sending utf8 and latin1 data mixed, you may need to override this
-        binmode STDIN, ':raw';
+ # Default to unencoded, raw data out.
+ # if you're sending utf8 and latin1 data mixed, you may need to override this
+        binmode STDIN,  ':raw';
         binmode STDOUT, ':raw';
 
-        my $remote_sockaddr = getpeername($self->stdio_handle);
+        my $remote_sockaddr = getpeername( $self->stdio_handle );
         my ( undef, $iaddr ) = sockaddr_in($remote_sockaddr);
         my $peername = gethostbyaddr( $iaddr, AF_INET ) || "localhost";
 
         my $peeraddr = inet_ntoa($iaddr) || "127.0.0.1";
 
-        my $local_sockaddr = getsockname($self->stdio_handle);
+        my $local_sockaddr = getsockname( $self->stdio_handle );
         my ( undef, $localiaddr ) = sockaddr_in($local_sockaddr);
         my $localname = gethostbyaddr( $localiaddr, AF_INET )
             || "localhost";
         my $localaddr = inet_ntoa($localiaddr) || "127.0.0.1";
 
-        my ( $method, $request_uri, $proto ) =
-            $self->parse_request
-                or do {$self->bad_request; return};
+        my ( $method, $request_uri, $proto ) = $self->parse_request
+            or do { $self->bad_request; return };
 
         $proto ||= "HTTP/0.9";
 
-        my ( $file, $query_string ) =
-            ( $request_uri =~ /([^?]*)(?:\?(.*))?/ );    # split at ?
+        my ( $file, $query_string )
+            = ( $request_uri =~ /([^?]*)(?:\?(.*))?/ );    # split at ?
 
         if ( $method !~ /^(?:GET|POST|HEAD)$/ ) {
             $self->bad_request;
@@ -275,19 +273,17 @@ sub _process_request {
         if ( $proto =~ m{HTTP/(\d(\.\d)?)$} and $1 >= 1 ) {
 
             my $headers = $self->parse_headers
-                or do{$self->bad_request; return};
+                or do { $self->bad_request; return };
 
-            $self->headers( $headers) ;
+            $self->headers($headers);
 
         }
 
         $self->post_setup_hook if $self->can("post_setup_hook");
 
-
         $self->handler;
-    }
+        }
 }
-
 
 =head2 stdio_handle [FILEHANDLE]
 
@@ -317,7 +313,7 @@ could do something interesting here (see L<HTTP::Server::Simple::Logger>).
 sub stdin_handle {
     my $self = shift;
     return $self->stdio_handle;
-} 
+}
 
 =head2 stdout_handle
 
@@ -330,8 +326,7 @@ could do something interesting here (see L<HTTP::Server::Simple::Logger>).
 sub stdout_handle {
     my $self = shift;
     return $self->stdio_handle;
-} 
-
+}
 
 =head1 IMPORTANT SUB-CLASS METHODS
 
@@ -347,11 +342,12 @@ filehandle.
 =cut
 
 sub handler {
-    my ( $self ) = @_;
-    if ( ref ($self) ne __PACKAGE__ ) {
-	croak "do not call ".ref($self)."::SUPER->handler";
-    } else {
-	die "handler called out of context";
+    my ($self) = @_;
+    if ( ref($self) ne __PACKAGE__ ) {
+        croak "do not call " . ref($self) . "::SUPER->handler";
+    }
+    else {
+        die "handler called out of context";
     }
 }
 
@@ -378,9 +374,9 @@ of keys of this list.
 =cut
 
 sub setup {
-    my ( $self ) = @_;
-    while ( my ($item, $value) = splice @_, 0, 2 ) {
-	$self->$item($value) if $self->can($item);
+    my ($self) = @_;
+    while ( my ( $item, $value ) = splice @_, 0, 2 ) {
+        $self->$item($value) if $self->can($item);
     }
 }
 
@@ -412,14 +408,14 @@ That method will be handed a (key,value) pair of the header name and the value.
 =cut
 
 sub headers {
-    my $self = shift;
+    my $self    = shift;
     my $headers = shift;
 
     my $can_header = $self->can("header");
-    while ( my ($header, $value) = splice @$headers, 0, 2 ) {
-	if ( $can_header ) {
-	    $self->header($header => $value)
-	}
+    while ( my ( $header, $value ) = splice @$headers, 0, 2 ) {
+        if ($can_header) {
+            $self->header( $header => $value );
+        }
     }
 }
 
@@ -446,9 +442,11 @@ yourself in subclasses.
 sub print_banner {
     my $self = shift;
 
-    print(  __PACKAGE__.": You can connect to your server at "
-	    ."http://localhost:" . $self->port
-          . "/\n" );
+    print(    __PACKAGE__
+            . ": You can connect to your server at "
+            . "http://localhost:"
+            . $self->port
+            . "/\n" );
 
 }
 
@@ -473,11 +471,11 @@ sub parse_request {
     $_ = $chunk;
 
     m/^(\w+)\s+(\S+)(?:\s+(\S+))?\r?$/;
-    my $method = $1 || '';
-    my $uri = $2 || '';
+    my $method   = $1 || '';
+    my $uri      = $2 || '';
     my $protocol = $3 || '';
 
-    return($method, $uri, $protocol);
+    return ( $method, $uri, $protocol );
 }
 
 =head2 parse_headers
@@ -510,9 +508,8 @@ sub parse_headers {
         else { $chunk .= $buff }
     }
 
-    return(\@headers);
+    return ( \@headers );
 }
-
 
 =head2 setup_listener
 
@@ -527,18 +524,17 @@ sub setup_listener {
 
     socket( HTTPDaemon, PF_INET, SOCK_STREAM, $tcp ) or die "socket: $!";
     setsockopt( HTTPDaemon, SOL_SOCKET, SO_REUSEADDR, pack( "l", 1 ) )
-      or warn "setsockopt: $!";
+        or warn "setsockopt: $!";
     bind( HTTPDaemon,
         sockaddr_in(
             $self->port(),
-            (
-                $self->host
+            (   $self->host
                 ? inet_aton( $self->host )
                 : INADDR_ANY
             )
         )
-      )
-      or die "bind: $!";
+        )
+        or die "bind: $!";
     listen( HTTPDaemon, SOMAXCONN ) or die "listen: $!";
 
 }
@@ -557,7 +553,7 @@ sub bad_request {
 
     print "HTTP/1.0 400 Bad request\r\n";    # probably OK by now
     print "Content-Type: text/html\r\nContent-Length: ",
-	length($bad_request_doc), "\r\n\r\n", $bad_request_doc;
+        length($bad_request_doc), "\r\n\r\n", $bad_request_doc;
 }
 
 =head1 AUTHOR

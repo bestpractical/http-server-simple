@@ -6,7 +6,7 @@ use warnings;
 
 our $VERSION = $HTTP::Server::Simple::VERSION;
 
-my %clean_env=%ENV;
+my %clean_env = %ENV;
 
 =head1 NAME
 
@@ -28,10 +28,11 @@ start-up state.
 =cut
 
 sub setup_environment {
-    %ENV= ( %clean_env,
-	    SERVER_SOFTWARE => "HTTP::Server::Simple/$VERSION",
-            GATEWAY_INTERFACE => 'CGI/1.1'
-	  );
+    %ENV = (
+        %clean_env,
+        SERVER_SOFTWARE   => "HTTP::Server::Simple/$VERSION",
+        GATEWAY_INTERFACE => 'CGI/1.1'
+    );
 }
 
 =head2 setup_server_url
@@ -40,8 +41,9 @@ Sets up the SERVER_URL environment variable
 
 =cut
 
-sub setup_server_url  {
-    $ENV{SERVER_URL} ||= ("http://".$ENV{SERVER_NAME}.":".$ENV{SERVER_PORT}."/");
+sub setup_server_url {
+    $ENV{SERVER_URL}
+        ||= ( "http://" . $ENV{SERVER_NAME} . ":" . $ENV{SERVER_PORT} . "/" );
 }
 
 =head2 setup_environment_from_metadata
@@ -53,17 +55,17 @@ See the docs in L<HTTP::Server::Simple> for more detail.
 
 =cut
 
-our %ENV_MAPPING =
-    ( protocol => "SERVER_PROTOCOL",
-      localport => "SERVER_PORT",
-      localname => "SERVER_NAME",
-      path => "PATH_INFO",
-      request_uri => "REQUEST_URI",
-      method => "REQUEST_METHOD",
-      peeraddr => "REMOTE_ADDR",
-      peername => "REMOTE_HOST",
-      query_string => "QUERY_STRING",
-    );
+our %ENV_MAPPING = (
+    protocol     => "SERVER_PROTOCOL",
+    localport    => "SERVER_PORT",
+    localname    => "SERVER_NAME",
+    path         => "PATH_INFO",
+    request_uri  => "REQUEST_URI",
+    method       => "REQUEST_METHOD",
+    peeraddr     => "REMOTE_ADDR",
+    peername     => "REMOTE_HOST",
+    query_string => "QUERY_STRING",
+);
 
 sub setup_environment_from_metadata {
     no warnings 'uninitialized';
@@ -72,10 +74,10 @@ sub setup_environment_from_metadata {
     # XXX TODO: rather than clone functionality from the base class,
     # we should call super
     #
-    while ( my ($item, $value) = splice @_, 0, 2 ) {
+    while ( my ( $item, $value ) = splice @_, 0, 2 ) {
         if ( my $k = $ENV_MAPPING{$item} ) {
-	    $ENV{$k} = $value;
-	}
+            $ENV{$k} = $value;
+        }
     }
 
 }
@@ -87,22 +89,22 @@ C<header> turns a single HTTP headers into CGI environment variables.
 =cut
 
 sub header {
-    my $self = shift;
-    my $tag = shift;
+    my $self  = shift;
+    my $tag   = shift;
     my $value = shift;
 
-	$tag = uc($tag);
-	$tag =~ s/^COOKIES$/COOKIE/;
-	$tag =~ s/-/_/g;
-	$tag = "HTTP_" . $tag
-	    unless $tag =~ m/^(?:CONTENT_(?:LENGTH|TYPE)|COOKIE)$/;
+    $tag = uc($tag);
+    $tag =~ s/^COOKIES$/COOKIE/;
+    $tag =~ s/-/_/g;
+    $tag = "HTTP_" . $tag
+        unless $tag =~ m/^(?:CONTENT_(?:LENGTH|TYPE)|COOKIE)$/;
 
-	if ( exists $ENV{$tag} ) {
-	    $ENV{$tag} .= "; $value";
-	} else {
-	    $ENV{$tag} = $value;
-	}
+    if ( exists $ENV{$tag} ) {
+        $ENV{$tag} .= "; $value";
+    }
+    else {
+        $ENV{$tag} = $value;
+    }
 }
-
 
 1;
