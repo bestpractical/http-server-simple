@@ -5,7 +5,7 @@ use warnings;
 use Socket;
 use Carp;
 
-our $VERSION = '0.13';
+our $VERSION = '0.14_02';
 
 =head1 NAME
 
@@ -60,12 +60,11 @@ until you call C<-E<gt>run()>.
 
 # Handle SIGHUP
 
+                             
+                             
 local $SIG{CHLD} = 'IGNORE'; # reap child processes
 local $SIG{HUP} = sub {
-    # on a "kill -HUP", we first close our socket handles.
-    close Remote;
     close HTTPDaemon;
-
     # and then, on systems implementing fork(), we make sure
     # we are running with a new pid, so another -HUP will still
     # work on the new process.
@@ -202,14 +201,19 @@ sub _default_run {
         $self->print_banner;
 
         while (1) {
-            for ( ; accept( Remote, HTTPDaemon ) ; close Remote ) {
-                $self->stdio_handle(\*Remote);
+            local $SIG{PIPE} = 'IGNORE'; # If we don't ignore SIGPIPE, a 
+                                      # client closing the connection before we 
+                                      # finish sending will cause the server to exit
+            while ( accept( my $remote, HTTPDaemon )) {
+                $self->stdio_handle($remote);
                 $self->accept_hook if $self->can("accept_hook");
 
                 *STDIN  = $self->stdin_handle();
                 *STDOUT = $self->stdout_handle();
-		select STDOUT; # required for Recorder
+		select STDOUT; # required for HTTP::Server::Simple::Recorder
+                               # XXX TODO glasser: why?
                 $pkg->process_request;
+                close $remote;
             }
         }    
     }
@@ -221,6 +225,7 @@ sub _process_request {
     # Create a callback closure that is invoked for each incoming request;
     # the $self above is bound into the closure.
     sub {
+
         $self->stdio_handle(*STDIN) unless $self->stdio_handle;
 
         # Default to unencoded, raw data out.
@@ -277,6 +282,7 @@ sub _process_request {
         }
 
         $self->post_setup_hook if $self->can("post_setup_hook");
+
 
         $self->handler;
     }

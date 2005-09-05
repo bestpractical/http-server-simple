@@ -1,5 +1,7 @@
 
   Split out HTTP::Server::Simple::CGI::Environment to support non-CGI.pm CGIs
+  Ignore SIGPIPE
+
 
 0.13 Tue Aug  9 21:25:20 EDT 2005
 
