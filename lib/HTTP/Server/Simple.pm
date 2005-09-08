@@ -5,17 +5,12 @@ use warnings;
 use Socket;
 use Carp;
 
-our $VERSION = '0.14_02';
+our $VERSION = '0.14_03';
 
 =head1 NAME
 
 HTTP::Server::Simple
 
-=head1 WARNING
-
-This code is still undergoing active development. Particularly, the
-API is not yet frozen. Comments about the API would be greatly
-appreciated.
 
 =head1 SYNOPSIS
 
@@ -45,11 +40,30 @@ module (see L<HTTP::Server::Simple::CGI>);
 
 =head1 DESCRIPTION
 
-This is a simple standalone http dameon. It doesn't thread. It doesn't
-fork.
+This is a simple standalone HTTP server. By default, it doesn't thread 
+or fork.
 
-It does, however, act as a simple frontend which can turn a CGI into a
-standalone web-based application.
+It does, however, act as a simple frontend which can be used 
+to build a standalone web-based application or turn a CGI into one.
+
+(It's possible to use Net::Server to get threading, forking,
+preforking and so on. Autrijus Tang wrote the functionality and owes docs for that ;)
+
+By default, the server traps a few signals:
+
+=over
+
+=item HUP
+
+When you C<kill -HUP> the server, it does its best to rexec itself.
+
+=item PIPE
+
+If the server detects a broken pipe while writing output to the client, 
+it ignores the signal. Otherwise, a client closing the connection early 
+could kill the server
+
+=back
 
 =head2 HTTP::Server::Simple->new($port)
 
@@ -57,29 +71,6 @@ API call to start a new server.  Does not actually start listening
 until you call C<-E<gt>run()>.
 
 =cut
-
-# Handle SIGHUP
-
-local $SIG{CHLD} = 'IGNORE';    # reap child processes
-local $SIG{HUP} = sub {
-    close HTTPDaemon;
-
-    # and then, on systems implementing fork(), we make sure
-    # we are running with a new pid, so another -HUP will still
-    # work on the new process.
-    require Config;
-    if ( $Config::Config{d_fork} and my $pid = fork() ) {
-
-        # finally, allow ^C on the parent process to terminate
-        # the children.
-        waitpid( $pid, 0 );
-        exit;
-    }
-
-    # do the exec. if $0 is not executable, try running it with $^X.
-    exec {$0}( ( ( -x $0 ) ? () : ($^X) ), $0, @ARGV );
-};
-
 sub new {
     my ( $proto, $port ) = @_;
     my $class = ref($proto) || $proto;
@@ -158,6 +149,28 @@ my $server_class_id = 0;
 sub run {
     my $self   = shift;
     my $server = $self->net_server;
+
+    # Handle SIGHUP
+
+    local $SIG{CHLD} = 'IGNORE';    # reap child processes
+    local $SIG{HUP} = sub {
+        close HTTPDaemon;
+
+        # and then, on systems implementing fork(), we make sure
+        # we are running with a new pid, so another -HUP will still
+        # work on the new process.
+        require Config;
+        if ( $Config::Config{d_fork} and my $pid = fork() ) {
+
+            # finally, allow ^C on the parent process to terminate
+            # the children.
+            waitpid( $pid, 0 );
+            exit;
+        }
+
+        # do the exec. if $0 is not executable, try running it with $^X.
+        exec {$0}( ( ( -x $0 ) ? () : ($^X) ), $0, @ARGV );
+    };
 
     # $pkg is generated anew for each invocation to "run"
     # Just so we can use different net_server() implementations

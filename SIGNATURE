@@ -14,9 +14,9 @@ not run its Makefile.PL or Build.PL.
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-SHA1 c3f00505e54fc5a7aada2be16900aa6d59d5c194 Changes
+SHA1 7ea3dd9fcdcc2607cafa9c82edb70090297658c5 Changes
 SHA1 0ac508c50476dcc2bf8fe3094cb341425291e1ee MANIFEST
-SHA1 6313a5050d0057df54c4f29c7248d1ee7c281e7c META.yml
+SHA1 c2533ce46b89fa0eb1e0c864548265ade18b241e META.yml
 SHA1 490f3fd115e09cb05b725580e5ed5cdd58241049 Makefile.PL
 SHA1 ed0c107672daac3bc9e266876666e1059dbe44b7 README
 SHA1 4ea1e9072ca87399184a46233df52a21e285604d ex/sample_server
@@ -28,7 +28,7 @@ SHA1 e094fe96aef06c68d7a424818c12e52b11f1ccdd inc/Module/Install/Makefile.pm
 SHA1 e448c6dc5351ef425e3f8bdbeb642409120bc3ca inc/Module/Install/Metadata.pm
 SHA1 134de6ff2f762873b6a1af950dd53f8e0a801d73 inc/Module/Install/Win32.pm
 SHA1 1ec06df292af7f652d33db6129e9e4c7cc8b5095 inc/Module/Install/WriteAll.pm
-SHA1 7f72bec8b4d6dfba12a0c8dbc9e91392660188d8 lib/HTTP/Server/Simple.pm
+SHA1 f7db491bac7b362f278320d7b20eacd786ff0e91 lib/HTTP/Server/Simple.pm
 SHA1 2d7348b166f654a460ddae4cb4183f4a544c85fc lib/HTTP/Server/Simple/CGI.pm
 SHA1 b2c2d007a7f50058c874e633d15fb621b2bfc394 lib/HTTP/Server/Simple/CGI/Environment.pm
 SHA1 db064af54cab345a71daec576e32e64b8fb1033d t/00smoke.t
@@ -39,7 +39,7 @@ SHA1 bc768072c7b03bd801a81936ef79bbe42e05f98f t/04cgi.t
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.1 (GNU/Linux)
 
-iD8DBQFDHIh7Ei9d9xCOQEYRAtKaAJ4v25FqXkYIoK/+gGgf0bXv0NdQPwCglVwu
-m80vCVprXzunzBPl6NHi6/k=
-=4/Z3
+iD8DBQFDICmtEi9d9xCOQEYRAoTFAJsFd7pPRvKuk3Xv+jKNirjtKF/WygCcD+gb
+zaqfBZgDtraQcolBjG0gqkY=
+=MKBE
 -----END PGP SIGNATURE-----
