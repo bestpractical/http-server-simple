@@ -1,5 +1,5 @@
 name: HTTP-Server-Simple
-version: 0.14_03
+version: 0.14
 license: perl
 distribution_type: module
 requires:

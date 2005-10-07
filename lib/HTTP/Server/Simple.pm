@@ -5,7 +5,7 @@ use warnings;
 use Socket;
 use Carp;
 
-our $VERSION = '0.14_03';
+our $VERSION = '0.14';
 
 =head1 NAME
 
