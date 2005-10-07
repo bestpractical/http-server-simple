@@ -1,9 +1,12 @@
+0.14 Thu Oct  6 20:48:49 EDT 2005
 
   Split out HTTP::Server::Simple::CGI::Environment to support non-CGI.pm CGIs
   Ignore SIGPIPE
   
   Signal handlers are now installed on ->run, not on new. Also, they're 
   documented. Thanks to Mark Fowler.
+ 
+  We no longer lookup $ENV{'REMOTE_HOST'} by hostname, as it can cause huge performance problems.
 
 0.13 Tue Aug  9 21:25:20 EDT 2005
 

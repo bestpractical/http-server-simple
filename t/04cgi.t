@@ -1,4 +1,4 @@
-use Test::More tests => 22;
+use Test::More tests => 20;
 use Socket;
 use strict;
 
@@ -8,7 +8,6 @@ my $host = gethostbyaddr(inet_aton('localhost'), AF_INET);
 our %methods=(
               url => "url: http://$host:".PORT,
               path_info => 'path_info: /cgitest/path_info',
-              remote_host => "remote_host: $host",
               server_name => "server_name: $host",
               server_port => 'server_port: '.PORT,
               server_software => 'server_software: HTTP::Server::Simple/\d+.\d+',
@@ -23,7 +22,6 @@ our %envvars=(
               SERVER_PROTOCOL => 'SERVER_PROTOCOL: HTTP/1.1',
               SERVER_NAME => "SERVER_NAME: $host",
               SERVER_SOFTWARE => 'SERVER_SOFTWARE: HTTP::Server::Simple/\d+.\d+',
-              REMOTE_HOST => "REMOTE_HOST: $host",
               REMOTE_ADDR => 'REMOTE_ADDR: 127.0.0.1',
               QUERY_STRING => 'QUERY_STRING: ',
               PATH_INFO => 'PATH_INFO: /cgitest/PATH_INFO',

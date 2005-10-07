@@ -247,14 +247,11 @@ sub _process_request {
 
         my $remote_sockaddr = getpeername( $self->stdio_handle );
         my ( undef, $iaddr ) = sockaddr_in($remote_sockaddr);
-        my $peername = gethostbyaddr( $iaddr, AF_INET ) || "localhost";
-
         my $peeraddr = inet_ntoa($iaddr) || "127.0.0.1";
 
         my $local_sockaddr = getsockname( $self->stdio_handle );
         my ( undef, $localiaddr ) = sockaddr_in($local_sockaddr);
-        my $localname = gethostbyaddr( $localiaddr, AF_INET )
-            || "localhost";
+        my $localname = gethostbyaddr( $localiaddr, AF_INET ) || "localhost";
         my $localaddr = inet_ntoa($localiaddr) || "127.0.0.1";
 
         my ( $method, $request_uri, $proto ) = $self->parse_request
@@ -278,7 +275,7 @@ sub _process_request {
             path         => $file,
             localname    => $localname,
             localport    => $self->port,
-            peername     => $peername,
+            peername     => $peeraddr,
             peeraddr     => $peeraddr,
         );
 
