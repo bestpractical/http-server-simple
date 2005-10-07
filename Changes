@@ -1,3 +1,7 @@
+0.15 Thu Oct  6 21:11:02 EDT 2005
+
+  Precompute the local host's hostname and IP to save on DNS lookups at runtime 
+
 0.14 Thu Oct  6 20:48:49 EDT 2005
 
   Split out HTTP::Server::Simple::CGI::Environment to support non-CGI.pm CGIs

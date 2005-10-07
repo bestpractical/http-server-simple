@@ -5,7 +5,7 @@ use warnings;
 use Socket;
 use Carp;
 
-our $VERSION = '0.14';
+our $VERSION = '0.15';
 
 =head1 NAME
 
@@ -71,6 +71,7 @@ API call to start a new server.  Does not actually start listening
 until you call C<-E<gt>run()>.
 
 =cut
+
 sub new {
     my ( $proto, $port ) = @_;
     my $class = ref($proto) || $proto;
@@ -83,8 +84,34 @@ sub new {
     my $self = {};
     bless( $self, $class );
     $self->port( $port || '8080' );
+
+
+
     return $self;
 }
+
+
+=head2 lookup_localhost
+
+Looks up the local host's hostname and IP address.
+
+Stuffs them into
+
+$self->{'localname'} and $self->{'localaddr'}
+
+=cut
+
+sub lookup_localhost {
+    my $self = shift;
+
+    my $local_sockaddr = getsockname( $self->stdio_handle );
+    my ( undef, $localiaddr ) = sockaddr_in($local_sockaddr);
+    $self->host( gethostbyaddr( $localiaddr, AF_INET ) || "localhost");
+    $self->{'local_addr'} = inet_ntoa($localiaddr) || "127.0.0.1";
+}
+
+
+
 
 =head2 port [NUMBER]
 
@@ -218,7 +245,9 @@ sub _default_run {
                  # finish sending will cause the server to exit
             while ( accept( my $remote, HTTPDaemon ) ) {
                 $self->stdio_handle($remote);
+                $self->lookup_localhost() unless ($self->host);
                 $self->accept_hook if $self->can("accept_hook");
+
 
                 *STDIN  = $self->stdin_handle();
                 *STDOUT = $self->stdout_handle();
@@ -249,11 +278,6 @@ sub _process_request {
         my ( undef, $iaddr ) = sockaddr_in($remote_sockaddr);
         my $peeraddr = inet_ntoa($iaddr) || "127.0.0.1";
 
-        my $local_sockaddr = getsockname( $self->stdio_handle );
-        my ( undef, $localiaddr ) = sockaddr_in($local_sockaddr);
-        my $localname = gethostbyaddr( $localiaddr, AF_INET ) || "localhost";
-        my $localaddr = inet_ntoa($localiaddr) || "127.0.0.1";
-
         my ( $method, $request_uri, $proto ) = $self->parse_request
             or do { $self->bad_request; return };
 
@@ -273,7 +297,7 @@ sub _process_request {
             query_string => ( $query_string || '' ),
             request_uri  => $request_uri,
             path         => $file,
-            localname    => $localname,
+            localname    => $self->host,
             localport    => $self->port,
             peername     => $peeraddr,
             peeraddr     => $peeraddr,
@@ -294,6 +318,10 @@ sub _process_request {
         $self->handler;
         }
 }
+
+
+
+
 
 =head2 stdio_handle [FILEHANDLE]
 
