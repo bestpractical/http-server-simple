@@ -55,7 +55,13 @@ By default, the server traps a few signals:
 
 =item HUP
 
-When you C<kill -HUP> the server, it does its best to rexec itself.
+When you C<kill -HUP> the server, it does its best to rexec
+itself.  Please note that in order to provide restart-on-SIGHUP,
+HTTP::Server::Simple sets a SIGHUP handler during initialisation. If
+your request handling code forks you need to make sure you reset this
+or unexpected things will happen if somebody sends a HUP to all running
+processes spawned by your app (e.g. by "kill -HUP <script>")
+
 
 =item PIPE
 
