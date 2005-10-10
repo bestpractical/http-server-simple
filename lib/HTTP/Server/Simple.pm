@@ -187,6 +187,9 @@ sub run {
 
     local $SIG{CHLD} = 'IGNORE';    # reap child processes
     local $SIG{HUP} = sub {
+
+        # XXX TODO: Autrijus says this code was incorrect when he wrote
+        # it and we should move to the sample code from perldoc perlipc
         close HTTPDaemon;
 
         # and then, on systems implementing fork(), we make sure
