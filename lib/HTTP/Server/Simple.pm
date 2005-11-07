@@ -206,7 +206,7 @@ sub run {
 
         # do the exec. if $0 is not executable, try running it with $^X.
         exec {$0}( ( ( -x $0 ) ? () : ($^X) ), $0, @ARGV );
-    };
+    } if exists $SIG{'HUP'};
 
     # $pkg is generated anew for each invocation to "run"
     # Just so we can use different net_server() implementations
