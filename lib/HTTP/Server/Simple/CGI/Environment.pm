@@ -3,6 +3,7 @@ package HTTP::Server::Simple::CGI::Environment;
 
 use strict;
 use warnings;
+use HTTP::Server::Simple;
 
 our $VERSION = $HTTP::Server::Simple::VERSION;
 
