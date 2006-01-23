@@ -287,8 +287,8 @@ sub _process_request {
         my ( undef, $iaddr ) = sockaddr_in($remote_sockaddr);
         my $peeraddr = inet_ntoa($iaddr) || "127.0.0.1";
 
-        my ( $method, $request_uri, $proto ) = $self->parse_request
-            or do { $self->bad_request; return };
+        my ( $method, $request_uri, $proto ) = $self->parse_request;
+        unless ($method) { $self->bad_request; return };
 
         $proto ||= "HTTP/0.9";
 
