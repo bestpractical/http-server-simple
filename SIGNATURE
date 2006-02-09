@@ -14,23 +14,23 @@ not run its Makefile.PL or Build.PL.
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-SHA1 26bb64f3864e5f6784401a38e226aa1ddd73edde Changes
+SHA1 5fb9209da2f06d0bf15387dafcac44f8c53aa06f Changes
 SHA1 0ac508c50476dcc2bf8fe3094cb341425291e1ee MANIFEST
-SHA1 ecbd933c6b8e7d47e41fc16c3f21c8df92fa2c3f META.yml
+SHA1 51a91151f855b6d04d73b0611ab2d3c498bfa1c7 META.yml
 SHA1 490f3fd115e09cb05b725580e5ed5cdd58241049 Makefile.PL
 SHA1 ed0c107672daac3bc9e266876666e1059dbe44b7 README
 SHA1 4ea1e9072ca87399184a46233df52a21e285604d ex/sample_server
-SHA1 842ab7e28834effb9e4222aab72c4106727dea0f inc/Module/Install.pm
-SHA1 1da4fc271065900f73682f31d4f9c0dae5288143 inc/Module/Install/Base.pm
-SHA1 0d0b6772bd5ec750e99d238942c88329e394d48d inc/Module/Install/Can.pm
+SHA1 e8ed0773fed846d6f5480bf3bf1735c2d551da63 inc/Module/Install.pm
+SHA1 9dbed9ff1790473ec3136a606f062fa050326c43 inc/Module/Install/Base.pm
+SHA1 d37430abee4687a4861b1312e5bea6953e6afe4d inc/Module/Install/Can.pm
 SHA1 a784ba7d2b096084b2ffed3a7d853e2847f4dedb inc/Module/Install/Fetch.pm
-SHA1 dc2af04175831ddb9a00de944e761e5c46bbf283 inc/Module/Install/Makefile.pm
-SHA1 421da5922ad85b72ae5b27c33803e86b3762d238 inc/Module/Install/Metadata.pm
+SHA1 044cd2f160364fe36eca2ba35e16e7cf46c79138 inc/Module/Install/Makefile.pm
+SHA1 49e0d839edeb0f3e9af12fd2444b98365393a23e inc/Module/Install/Metadata.pm
 SHA1 2a1b494a7e5adaa3216e86d909dd5bf87d084c80 inc/Module/Install/Win32.pm
-SHA1 c92e1d32922615347e059e7e3a2f53b5e9c98e3b inc/Module/Install/WriteAll.pm
-SHA1 f6b00458452368320b19750392487cf1e8515c1b lib/HTTP/Server/Simple.pm
+SHA1 4a23fafe534363a99f0d936df9086ad243e692c9 inc/Module/Install/WriteAll.pm
+SHA1 6c1a08a64406bdf937a0996d1803286df7a223f6 lib/HTTP/Server/Simple.pm
 SHA1 2d7348b166f654a460ddae4cb4183f4a544c85fc lib/HTTP/Server/Simple/CGI.pm
-SHA1 b2c2d007a7f50058c874e633d15fb621b2bfc394 lib/HTTP/Server/Simple/CGI/Environment.pm
+SHA1 27c4b8c97f00d3427a320c8087e2b77b128a1992 lib/HTTP/Server/Simple/CGI/Environment.pm
 SHA1 db064af54cab345a71daec576e32e64b8fb1033d t/00smoke.t
 SHA1 9e68bffc26b5a42e2785ec68c3bf6fe45d6bb6da t/01live.t
 SHA1 aca95653cfce68912e08c57b3a4566207e2f99b3 t/02pod.t
@@ -39,7 +39,7 @@ SHA1 0ca7d32c396129b38a33a8077171b84076feb8d9 t/04cgi.t
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.1 (GNU/Linux)
 
-iD8DBQFDb63XEi9d9xCOQEYRArQVAJ44Bkj2jqybBIr71mclQ0aOi/u2cgCgkakh
-e210lVUgdouYs0xX1F+CElo=
-=odXJ
+iD8DBQFD6qfhEi9d9xCOQEYRAjyLAKCLKcijRrqA9NW7JZkfnOVlHuxifwCeMZuU
+nrm1Jro4k1y4NyyOj9r7ee8=
+=K+Ut
 -----END PGP SIGNATURE-----

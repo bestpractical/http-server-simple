@@ -1,3 +1,12 @@
+0.18
+
+  new method: valid_http_method() from Chris Dent to make it easier to 
+  create servers handling non-standard HTTP verbs.
+
+0.17
+  Workaround for Class::Spiffy classloading order issue
+  Better handling for completely mangled requests.
+
 0.16 Mon Nov  7 14:40:43 EST 2005
 
   SIG{'HUP'} does not exist on Win32 (cpan #15606)

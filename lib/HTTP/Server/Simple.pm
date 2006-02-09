@@ -5,7 +5,7 @@ use warnings;
 use Socket;
 use Carp;
 
-our $VERSION = '0.16';
+our $VERSION = '0.18';
 
 =head1 NAME
 
@@ -288,17 +288,17 @@ sub _process_request {
         my $peeraddr = inet_ntoa($iaddr) || "127.0.0.1";
 
         my ( $method, $request_uri, $proto ) = $self->parse_request;
-        unless ($method) { $self->bad_request; return };
+        
+        
+        unless ($self->valid_http_method($method) ) {
+            $self->bad_request;
+            return;
+        }
 
         $proto ||= "HTTP/0.9";
 
         my ( $file, $query_string )
             = ( $request_uri =~ /([^?]*)(?:\?(.*))?/ );    # split at ?
-
-        if ( $method !~ /^(?:GET|POST|HEAD)$/ ) {
-            $self->bad_request;
-            return;
-        }
 
         $self->setup(
             method       => $method,
@@ -603,9 +603,22 @@ sub bad_request {
         length($bad_request_doc), "\r\n\r\n", $bad_request_doc;
 }
 
+=head2 valid_http_method($method)
+
+Given a candidate HTTP method in $method, determine if it is valid.
+Override if, for example, you'd like to do some WebDAV.
+
+=cut 
+
+sub valid_http_method {
+    my $self   = shift;
+    my $method = shift;
+    return $method =~ /^(?:GET|POST|HEAD|PUT|DELETE)$/;
+}
+
 =head1 AUTHOR
 
-Copyright (c) 2004-2005 Jesse Vincent, <jesse@bestpractical.com>.
+Copyright (c) 2004-2006 Jesse Vincent, <jesse@bestpractical.com>.
 All rights reserved.
 
 Marcus Ramberg <drave@thefeed.no> contributed tests, cleanup, etc
