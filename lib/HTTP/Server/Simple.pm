@@ -161,9 +161,9 @@ sub background {
     my $child = fork;
     die "Can't fork: $!" unless defined($child);
     return $child if $child;
-    use POSIX;
 
     if ( $^O !~ /MSWin32/ ) {
+        require POSIX;
         POSIX::setsid()
             or die "Can't start a new session: $!";
     }
