@@ -1,3 +1,6 @@
+  Require POSIX only if we need it, rather than "use" it all the time
+  [cpan #17533] - Brad Bowman
+
 0.18
 
   new method: valid_http_method() from Chris Dent to make it easier to 
