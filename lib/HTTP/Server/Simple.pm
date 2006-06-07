@@ -223,6 +223,7 @@ sub run {
     }
     else {
         $self->setup_listener;
+	$self->after_setup_listener();
         *{"$pkg\::run"} = $self->_default_run;
     }
 
@@ -584,6 +585,16 @@ sub setup_listener {
         or die "bind: $!";
     listen( HTTPDaemon, SOMAXCONN ) or die "listen: $!";
 
+}
+
+
+=head2 after_setup_listener
+
+This method is called immediately after setup_listener. It's here just for you to override.
+
+=cut
+
+sub after_setup_listener {
 }
 
 =head2 bad_request
