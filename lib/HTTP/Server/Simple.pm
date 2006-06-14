@@ -422,7 +422,7 @@ of keys of this list.
 =cut
 
 sub setup {
-    my ($self) = @_;
+    my $self shift;
     while ( my ( $item, $value ) = splice @_, 0, 2 ) {
         $self->$item($value) if $self->can($item);
     }
