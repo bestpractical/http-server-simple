@@ -1,5 +1,5 @@
 distribution_type: module
-generated_by: Module::Install version 0.62
+generated_by: Module::Install version 0.63
 license: perl
 name: HTTP-Server-Simple
 no_index: 
@@ -10,4 +10,4 @@ requires:
   CGI: 0
   Socket: 0
   Test::More: 0
-version: 0.18
+version: 0.19

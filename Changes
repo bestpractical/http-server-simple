@@ -1,3 +1,8 @@
+0.19
+
+  Catch and ignore SIGPIPE, so broken pipes from the client don't cause 
+  Standalone to drop all the way back to the shell.
+
   Require POSIX only if we need it, rather than "use" it all the time
   [cpan #17533] - Brad Bowman
 
