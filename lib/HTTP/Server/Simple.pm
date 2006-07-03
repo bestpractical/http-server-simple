@@ -186,7 +186,6 @@ sub run {
     # Handle SIGHUP
 
     local $SIG{CHLD} = 'IGNORE';    # reap child processes
-    local $SIG{PIPE} = 'IGNORE';    # ignore broken pipes (for now)
     local $SIG{HUP} = sub {
 
         # XXX TODO: Autrijus says this code was incorrect when he wrote
