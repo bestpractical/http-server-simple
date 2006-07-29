@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Socket;
 use Carp;
+use URI::Escape;
 
 our $VERSION = '0.20';
 
@@ -523,7 +524,7 @@ sub parse_request {
     my $uri      = $2 || '';
     my $protocol = $3 || '';
 
-    return ( $method, $uri, $protocol );
+    return ( $method, uri_unescape( $uri ), $protocol );
 }
 
 =head2 parse_headers
