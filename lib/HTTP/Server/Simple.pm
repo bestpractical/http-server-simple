@@ -305,7 +305,7 @@ sub _process_request {
         $self->setup(
             method       => $method,
             protocol     => $proto,
-            query_string => ( $query_string || '' ),
+            query_string => ( defined($query_string) ? $query_string : '' ),
             request_uri  => $request_uri,
             path         => $file,
             localname    => $self->host,
@@ -624,7 +624,7 @@ Override if, for example, you'd like to do some WebDAV.
 
 sub valid_http_method {
     my $self   = shift;
-    my $method = shift;
+    my $method = shift or return 0;
     return $method =~ /^(?:GET|POST|HEAD|PUT|DELETE)$/;
 }
 
