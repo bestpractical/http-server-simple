@@ -1,4 +1,9 @@
 
+0.21 Wed Oct 18 23:31:42 EDT 2006
+   [rt.cpan.org #21727] [PATCH] Support for Perl 5.004
+    -- SÃ©bastien Aperghis-Tramoni 
+
+
 0.19
 
   Catch and ignore SIGPIPE, so broken pipes from the client don't cause 

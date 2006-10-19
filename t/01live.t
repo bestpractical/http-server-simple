@@ -19,12 +19,12 @@ my $DEBUG = 1 if @ARGV;
 
     my $pid=$s->background();
 
-    like($pid, qr/^-?\d+$/,'pid is numeric');
+    like($pid, '/^-?\d+$/', 'pid is numeric');
     select(undef,undef,undef,0.2); # wait a sec
 
     my $content=fetch("GET / HTTP/1.1", "");
 
-    like($content, qr/Congratulations/, "Returns a page");
+    like($content, '/Congratulations/', "Returns a page");
     is(kill(9,$pid),1,'Signaled 1 process successfully');
     wait or die "couldn't wait for sub-process completion";
 }
@@ -35,22 +35,22 @@ my $DEBUG = 1 if @ARGV;
     my $pid=$s->background();
     diag("started server on $pid");
     select(undef,undef,undef,0.2); # wait a sec
-    like($pid, qr/^-?\d+$/,'pid is numeric');
+    like($pid, '/^-?\d+$/', 'pid is numeric');
 
     my $content=fetch("GET / HTTP/1.1", "");
-    like($content,qr/Congratulations/,"Returns a page");
+    like($content, '/Congratulations/', "Returns a page");
 
     eval {
 	like(fetch("GET your mum wet"),  # anything does!
-	     qr/bad request/i,
+	     '/bad request/i',
 	     "knows what a request isn't");
     };
     fail("got exception in client: $@") if $@;
 
-    like(fetch("GET / HTTP/1.1", ""), qr/Congratulations/,
+    like(fetch("GET / HTTP/1.1", ""), '/Congratulations/',
 	 "HTTP/1.1 request");
 
-    like(fetch("GET /"), qr/Congratulations/,
+    like(fetch("GET /"), '/Congratulations/',
 	 "HTTP/0.9 request");
 
     is(kill(9,$pid),1,'Signaled 1 process successfully');

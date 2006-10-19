@@ -5,7 +5,8 @@ use strict;
 use warnings;
 use HTTP::Server::Simple;
 
-our $VERSION = $HTTP::Server::Simple::VERSION;
+use vars qw($VERSION %ENV_MAPPING);
+$VERSION = $HTTP::Server::Simple::VERSION;
 
 my %clean_env = %ENV;
 
@@ -56,7 +57,7 @@ See the docs in L<HTTP::Server::Simple> for more detail.
 
 =cut
 
-our %ENV_MAPPING = (
+%ENV_MAPPING = (
     protocol     => "SERVER_PROTOCOL",
     localport    => "SERVER_PORT",
     localname    => "SERVER_NAME",

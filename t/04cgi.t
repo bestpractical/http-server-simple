@@ -1,11 +1,18 @@
-use Test::More tests => 20;
+use Test::More;
 use Socket;
 use strict;
+
+eval "use Data::Dumper";
+if ($@) {
+    plan skip_all => "Data::Dumper not available";
+}else {
+    plan tests => 20;
+}
 
 use constant PORT => 13432;
 my $host = gethostbyaddr(inet_aton('localhost'), AF_INET);
 
-our %methods=(
+my %methods=(
               url => "url: http://$host:".PORT,
               path_info => 'path_info: /cgitest/path_info',
               server_name => "server_name: $host",
@@ -14,7 +21,7 @@ our %methods=(
               request_method => 'request_method: GET',
             );
 
-our %envvars=(
+my %envvars=(
               SERVER_URL => "SERVER_URL: http://$host:".PORT.'/',
               SERVER_PORT => 'SERVER_PORT: '.PORT,
               REQUEST_METHOD => 'REQUEST_METHOD: GET',
@@ -34,15 +41,15 @@ our %envvars=(
 
   my $pid=$server->background;
 
-  like($pid,qr/^-?\d+$/,'pid is numeric');
+  like($pid, '/^-?\d+$/', 'pid is numeric');
 
   select(undef,undef,undef,0.2); # wait a sec
-  like(fetch("GET / HTTP/1.1",""),qr(NOFILE),'no file');
+  like(fetch("GET / HTTP/1.1",""), '/NOFILE/', 'no file');
 
   foreach my $method (keys(%methods)) {
     like(
           fetch("GET /cgitest/$method HTTP/1.1",""),
-          qr($methods{$method}),
+          "/$methods{$method}/",
           "method - $method"
         );
     select(undef,undef,undef,0.2); # wait a sec
@@ -51,7 +58,7 @@ our %envvars=(
   foreach my $envvar (keys(%envvars)) {
     like(
           fetch("GET /cgitest/$envvar HTTP/1.1",""),
-          qr($envvars{$envvar}),
+          "/$envvars{$envvar}/",
           "Environment - $envvar"
         );
     select(undef,undef,undef,0.2); # wait a sec
@@ -134,7 +141,7 @@ sub fetch {
   package CGIServer;
   use base qw(HTTP::Server::Simple::CGI);
   use Env;
-  use Data::Dumper;
+  eval "use Data::Dumper";
 
 
   sub handle_request {
@@ -149,7 +156,7 @@ sub fetch {
     print "Content-Type: text/html\r\nContent-Length: ";
     my $response;
     if($methods{$file}) {
-      $response="$file: ".$cgi->$file;
+      $response = "$file: ".$cgi->$file();
     } elsif($envvars{$file}) {
       $response="$file: $ENV{$file}";
     } else {

@@ -7,7 +7,8 @@ use warnings;
 
 use CGI ();
 
-our $VERSION = $HTTP::Server::Simple::VERSION;
+use vars qw($VERSION $default_doc);
+$VERSION = $HTTP::Server::Simple::VERSION;
 
 =head1 NAME
 
@@ -69,7 +70,6 @@ You want to override this method in your subclass
 
 =cut
 
-our $default_doc;
 $default_doc = ( join "", <DATA> );
 
 sub handle_request {
