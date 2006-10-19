@@ -1,4 +1,8 @@
 
+0.22 Wed Oct 18 23:36:34 EDT 2006
+  * Query string processing improvements
+
+
 0.21 Wed Oct 18 23:31:42 EDT 2006
    [rt.cpan.org #21727] [PATCH] Support for Perl 5.004
     -- SÃ©bastien Aperghis-Tramoni 
