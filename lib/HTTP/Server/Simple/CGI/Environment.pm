@@ -45,7 +45,7 @@ Sets up the SERVER_URL environment variable
 
 sub setup_server_url {
     $ENV{SERVER_URL}
-        ||= ( "http://" . $ENV{SERVER_NAME} . ":" . $ENV{SERVER_PORT} . "/" );
+        ||= ( "http://" . ($ENV{SERVER_NAME} || 'localhost') . ":" . ( $ENV{SERVER_PORT}||80) . "/" );
 }
 
 =head2 setup_environment_from_metadata
