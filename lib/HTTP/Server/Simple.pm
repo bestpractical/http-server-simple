@@ -7,7 +7,7 @@ use Carp;
 use URI::Escape;
 
 use vars qw($VERSION $bad_request_doc);
-$VERSION = '0.23';
+$VERSION = '0.24';
 
 
 =head1 NAME
@@ -287,12 +287,15 @@ sub _process_request {
         binmode STDIN,  ':raw';
         binmode STDOUT, ':raw';
 
-        my $remote_sockaddr = getpeername( $self->stdio_handle );
-        my ( undef, $iaddr ) = sockaddr_in($remote_sockaddr);
-        my $peeraddr = inet_ntoa($iaddr) || "127.0.0.1";
-
-        my ( $method, $request_uri, $proto ) = $self->parse_request;
+        # The ternary operator below is to protect against a crash caused by IE
+        # Ported from Catalyst::Engine::HTTP (Originally by Jasper Krogh and Peter Edwards)
+        # ( http://dev.catalyst.perl.org/changeset/5195, 5221 )
         
+        my $remote_sockaddr = getpeername( $self->stdio_handle );
+        my ( undef, $iaddr ) = $remote_sockaddr ? sockaddr_in($remote_sockaddr) : (undef,undef);
+        my $peeraddr = $iaddr ? ( inet_ntoa($iaddr) || "127.0.0.1" ) : '127.0.0.1';
+        
+        my ( $method, $request_uri, $proto ) = $self->parse_request;
         
         unless ($self->valid_http_method($method) ) {
             $self->bad_request;
