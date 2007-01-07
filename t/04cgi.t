@@ -2,12 +2,7 @@ use Test::More;
 use Socket;
 use strict;
 
-eval "use Data::Dumper";
-if ($@) {
-    plan skip_all => "Data::Dumper not available";
-}else {
-    plan tests => 20;
-}
+plan tests => 21;
 
 use constant PORT => 13432;
 my $host = gethostbyaddr(inet_aton('localhost'), AF_INET);
@@ -63,6 +58,12 @@ my %envvars=(
         );
     select(undef,undef,undef,0.2); # wait a sec
   }
+
+  like(
+       fetch("GET /cgitest/REQUEST_URI?foo%3Fbar",""),
+       "/foo%3Fbar/",
+       "Didn't decode already"
+      );
 
   is(kill(9,$pid),1,'Signaled 1 process successfully');
   wait or die "counldn't wait for sub-process completion";
@@ -141,8 +142,6 @@ sub fetch {
   package CGIServer;
   use base qw(HTTP::Server::Simple::CGI);
   use Env;
-  eval "use Data::Dumper";
-
 
   sub handle_request {
     my $self=shift;
