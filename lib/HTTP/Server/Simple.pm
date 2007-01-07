@@ -529,7 +529,7 @@ sub parse_request {
     my $uri      = $2 || '';
     my $protocol = $3 || '';
 
-    return ( $method, uri_unescape( $uri ), $protocol );
+    return ( $method, $uri, $protocol );
 }
 
 =head2 parse_headers
