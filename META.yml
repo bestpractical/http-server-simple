@@ -10,4 +10,4 @@ requires:
   CGI: 0
   Socket: 0
   Test::More: 0
-version: 0.24_01
+version: 0.26

@@ -1,3 +1,7 @@
+0.26
+ 
+  * Supports multi-line encoded values in query_sting (like foo%0Abar) -- Dobrica Pavlinusic 
+  * Fixes to URI unescaping to behave like apache does
 0.24
 
   * Hopefully deal with an odd case where a poorly behaved Internet Explorer could crash the server.
