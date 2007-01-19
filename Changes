@@ -1,3 +1,7 @@
+0.27
+
+ * 0.26 release apparently didn't get to cpan correctly
+
 0.26
  
   * Supports multi-line encoded values in query_sting (like foo%0Abar) -- Dobrica Pavlinusic 
