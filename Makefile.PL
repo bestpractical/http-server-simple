@@ -5,7 +5,9 @@ name('HTTP-Server-Simple');
 license('perl');
 requires ( Socket => 0,
 	   Test::More => 0,
-	   CGI => 0);
+	   CGI => 0,
+           URI::Escape => 0
+       );
 
    &WriteAll;
 
