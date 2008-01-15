@@ -1,24 +1,27 @@
-0.28_01
+0.28 Tue Jan 15 09:33:58 EST 2008
  * New restartability support from Mark Stosberg
 
-    After reviewing the code in HTTP::Server::Simple, Catalyst::Engine::HTTP and 
-    HTTP::Server::Brick, I found and implemented an updated signal handling 
-    approach that I like and understand, and actually works. 
-    
-    The current code restarted immediately if a SIGHUP came in, no matter what was 
-    happening, including if a request was in process of being fulfilled. 
-    
-    The new code works more like "apachectl graceful". It waits for the current 
-    request cycle to finish, and then restarts the server. 
-    
-    This code has to be integrated in the core, but its just about the same amount 
-    of signal handling code that was there... it just works better.  It's also 
-    written in such a way I think subclass/mixin authors could rewrite just these 
-    parts if they wanted. 
-    
-    Also, it looks like a Net::Server based sub-class would already be doing its 
-    own thing with SIGHUP handling, and should continue to be unaffected.
-    
+    After reviewing the code in HTTP::Server::Simple,
+    Catalyst::Engine::HTTP and HTTP::Server::Brick, I found and
+    implemented an updated signal handling approach that I like and
+    understand, and actually works.
+
+    The current code restarted immediately if a SIGHUP came in, no
+    matter what was happening, including if a request was in process of
+    being fulfilled.
+
+    The new code works more like "apachectl graceful". It waits for the
+    current request cycle to finish, and then restarts the server.
+
+    This code has to be integrated in the core, but its just about
+    the same amount of signal handling code that was there... it just
+    works better.  It's also written in such a way I think subclass/mixin
+    authors could rewrite just these parts if they wanted.
+
+    Also, it looks like a Net::Server based sub-class would already be
+    doing its own thing with SIGHUP handling, and should continue to
+    be unaffected.
+
 0.27
 
  * 0.26 release apparently didn't get to cpan correctly
