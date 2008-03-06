@@ -541,7 +541,23 @@ sub headers {
 =head2 accept_hook
 
 If defined by a sub-class, this method is called directly after an
-accept happens.
+accept happens.  An accept_hook to add SSL support might look like this:
+
+    sub accept_hook {
+        my $this = shift;
+        my $fh   = $this->stdio_handle;
+
+        my $newfh =
+        IO::Socket::SSL->start_SSL( $fh, 
+            SSL_server    => 1,
+            SSL_use_cert  => 1,
+            SSL_cert_file => 'myserver.crt',
+            SSL_key_file  => 'myserver.key',
+        )
+        or warn "problem setting up SSL socket: " . IO::Socket::SSL::errstr();
+
+        $this->stdio_handle($newfh) if $newfh;
+    }
 
 =head2 post_setup_hook
 
