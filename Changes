@@ -1,3 +1,8 @@
+0.30 Tue Mar 11 12:14:24 EDT 2008
+
+* Minor doc fix from Paul Miller. 
+* Fixing doc style from "$this" to "$self" like any self-respecting perl code
+
 0.29 Fri Feb 15 11:43:29 EST 2008
 
 * new example section from almut on perlmonks

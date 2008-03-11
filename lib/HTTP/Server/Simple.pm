@@ -8,7 +8,7 @@ use Carp;
 use URI::Escape;
 
 use vars qw($VERSION $bad_request_doc);
-$VERSION = '0.29';
+$VERSION = '0.30';
 
 
 =head1 NAME
@@ -544,8 +544,10 @@ If defined by a sub-class, this method is called directly after an
 accept happens.  An accept_hook to add SSL support might look like this:
 
     sub accept_hook {
-        my $this = shift;
-        my $fh   = $this->stdio_handle;
+        my $self = shift;
+        my $fh   = $self->stdio_handle;
+
+        $self->SUPER::accept_hook(@_);
 
         my $newfh =
         IO::Socket::SSL->start_SSL( $fh, 
@@ -556,7 +558,7 @@ accept happens.  An accept_hook to add SSL support might look like this:
         )
         or warn "problem setting up SSL socket: " . IO::Socket::SSL::errstr();
 
-        $this->stdio_handle($newfh) if $newfh;
+        $self->stdio_handle($newfh) if $newfh;
     }
 
 =head2 post_setup_hook
