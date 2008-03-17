@@ -1,3 +1,7 @@
+0.31 Sun Mar 16 20:51:04 EDT 2008
+
+* Test suite parallelization fixes. Thanks to Slaven Rezic
+
 0.30 Tue Mar 11 12:14:24 EDT 2008
 
 * Minor doc fix from Paul Miller. 

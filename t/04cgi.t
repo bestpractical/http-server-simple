@@ -3,22 +3,22 @@ use Socket;
 use strict;
 
 plan tests => 21;
+my $PORT = 8000 + $$;
 
-use constant PORT => 13432;
 my $host = gethostbyaddr(inet_aton('localhost'), AF_INET);
 
 my %methods=(
-              url => "url: http://$host:".PORT,
+              url => "url: http://$host:".$PORT,
               path_info => 'path_info: /cgitest/path_info',
               server_name => "server_name: $host",
-              server_port => 'server_port: '.PORT,
+              server_port => 'server_port: '.$PORT,
               server_software => 'server_software: HTTP::Server::Simple/\d+.\d+',
               request_method => 'request_method: GET',
             );
 
 my %envvars=(
-              SERVER_URL => "SERVER_URL: http://$host:".PORT.'/',
-              SERVER_PORT => 'SERVER_PORT: '.PORT,
+              SERVER_URL => "SERVER_URL: http://$host:".$PORT.'/',
+              SERVER_PORT => 'SERVER_PORT: '.$PORT,
               REQUEST_METHOD => 'REQUEST_METHOD: GET',
               REQUEST_URI => 'REQUEST_URI: /cgitest/REQUEST_URI',
               SERVER_PROTOCOL => 'SERVER_PROTOCOL: HTTP/1.1',
@@ -30,8 +30,8 @@ my %envvars=(
             );
 
 {
-  my $server=CGIServer->new(PORT);
-  is($server->port(),PORT,'Constructor set port correctly');
+  my $server=CGIServer->new($PORT);
+  is($server->port(),$PORT,'Constructor set port correctly');
   select(undef,undef,undef,0.2); # wait a sec
 
   my $pid=$server->background;
@@ -104,7 +104,7 @@ sub fetch {
 	( 'init'     => sub { "lookup"; },
 	  "lookup"   => sub { ($iaddr = inet_aton("localhost"))
 				  && "sockaddr"			    },
-	  "sockaddr" => sub { ($paddr = sockaddr_in(PORT, $iaddr))
+	  "sockaddr" => sub { ($paddr = sockaddr_in($PORT, $iaddr))
 				  && "proto"			    },
 	  "proto"    => sub { ($proto = getprotobyname('tcp'))
 				  && "socket"			    },

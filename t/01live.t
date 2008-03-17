@@ -7,15 +7,16 @@ use strict;
 # This script assumes that `localhost' will resolve to a local IP
 # address that may be bound to,
 
-use constant PORT => 13432;
+my $PORT = 8000 + $$;
+
 
 use HTTP::Server::Simple;
 
 my $DEBUG = 1 if @ARGV;
 
 {
-    my $s=HTTP::Server::Simple->new(PORT);
-    is($s->port(),PORT,"Constructor set port correctly");
+    my $s=HTTP::Server::Simple->new($PORT);
+    is($s->port(),$PORT,"Constructor set port correctly");
 
     my $pid=$s->background();
 
@@ -30,7 +31,7 @@ my $DEBUG = 1 if @ARGV;
 }
 
 {
-    my $s=HTTP::Server::Simple::CGI->new(PORT);
+    my $s=HTTP::Server::Simple::CGI->new($PORT);
     $s->host("localhost");
     my $pid=$s->background();
     diag("started server on $pid");
@@ -92,7 +93,7 @@ sub fetch {
 	( 'init'     => sub { "lookup"; },
 	  "lookup"   => sub { ($iaddr = inet_aton("localhost"))
 				  && "sockaddr"			    },
-	  "sockaddr" => sub { ($paddr = sockaddr_in(PORT, $iaddr))
+	  "sockaddr" => sub { ($paddr = sockaddr_in($PORT, $iaddr))
 				  && "proto"			    },
 	  "proto"    => sub { ($proto = getprotobyname('tcp'))
 				  && "socket"			    },
