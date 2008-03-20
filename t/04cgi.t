@@ -2,7 +2,7 @@ use Test::More;
 use Socket;
 use strict;
 
-plan tests => 21;
+plan tests => 22;
 my $PORT = 8000 + $$;
 
 my $host = gethostbyaddr(inet_aton('localhost'), AF_INET);
@@ -61,9 +61,16 @@ my %envvars=(
 
   like(
        fetch("GET /cgitest/REQUEST_URI?foo%3Fbar",""),
-       "/foo%3Fbar/",
+       qr/foo%3Fbar/,
        "Didn't decode already"
       );
+
+  like(
+       fetch("GET /cgitest/foo%2Fbar/PATH_INFO",""),
+       qr|foo/bar|,
+       "Did decode already"
+      );
+
 
   is(kill(9,$pid),1,'Signaled 1 process successfully');
   wait or die "counldn't wait for sub-process completion";

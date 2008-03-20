@@ -82,6 +82,9 @@ sub setup_environment_from_metadata {
         }
     }
 
+    # Apache and lighttpd both do one layer of unescaping on
+    # path_info; we should duplicate that.
+    $ENV{PATH_INFO} = URI::Escape::uri_unescape($ENV{PATH_INFO});
 }
 
 =head2  header
