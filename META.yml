@@ -1,6 +1,7 @@
 --- 
+author: ~
 distribution_type: module
-generated_by: Module::Install version 0.67
+generated_by: Module::Install version 0.68
 license: perl
 meta-spec: 
   url: http://module-build.sourceforge.net/META-spec-v1.3.html
@@ -15,4 +16,4 @@ requires:
   Socket: 0
   Test::More: 0
   URI::Escape: 0
-version: 0.28
+version: 0.31
