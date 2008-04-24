@@ -1,7 +1,7 @@
 # -*- perl -*-
 
 use Socket;
-use Test::More tests => 10;
+use Test::More tests => 14;
 use strict;
 
 # This script assumes that `localhost' will resolve to a local IP
@@ -12,16 +12,31 @@ my $PORT = 8000 + $$;
 
 use HTTP::Server::Simple;
 
+package SlowServer;
+# This test class just waits a while before it starts
+# accepting connections. This makes sure that CPAN #28122 is fixed:
+# background() shouldn't return prematurely.
+
+use base qw(HTTP::Server::Simple::CGI);
+sub setup_listener {
+    my $self = shift;
+    sleep 2;
+    $self->SUPER::setup_listener();
+}
+1;
+package main;
+
 my $DEBUG = 1 if @ARGV;
 
+my @classes = (qw(HTTP::Server::Simple SlowServer));
+for my $class (@classes)
 {
-    my $s=HTTP::Server::Simple->new($PORT);
+    my $s = $class->new($PORT);
     is($s->port(),$PORT,"Constructor set port correctly");
 
     my $pid=$s->background();
 
     like($pid, '/^-?\d+$/', 'pid is numeric');
-    select(undef,undef,undef,0.2); # wait a sec
 
     my $content=fetch("GET / HTTP/1.1", "");
 
@@ -35,7 +50,6 @@ my $DEBUG = 1 if @ARGV;
     $s->host("localhost");
     my $pid=$s->background();
     diag("started server on $pid");
-    select(undef,undef,undef,0.2); # wait a sec
     like($pid, '/^-?\d+$/', 'pid is numeric');
 
     my $content=fetch("GET / HTTP/1.1", "");
