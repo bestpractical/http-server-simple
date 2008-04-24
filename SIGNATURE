@@ -14,32 +14,32 @@ not run its Makefile.PL or Build.PL.
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-SHA1 b5ca06b2e2e8f24c5ee7761b1696f5c8c1095b1b Changes
+SHA1 8def9d9407f42319aa896a14f2c6d57ea2437d82 Changes
 SHA1 0ac508c50476dcc2bf8fe3094cb341425291e1ee MANIFEST
-SHA1 de5abaa8229fa5378d21eeb328081c8f14a7b488 META.yml
+SHA1 7812a1c898acbf76fcccb52068b2a9c23cb86bbf META.yml
 SHA1 3a02ba613b11b07dd1fa97e2a6b962ee3e039c98 Makefile.PL
 SHA1 ed0c107672daac3bc9e266876666e1059dbe44b7 README
 SHA1 4ea1e9072ca87399184a46233df52a21e285604d ex/sample_server
-SHA1 78edb89a439463e44c33a72bbee84c54d0dc8aaf inc/Module/Install.pm
-SHA1 8ea4e37df83fd0c1c050be5c8da75545c3828d9b inc/Module/Install/Base.pm
-SHA1 1da6031583c32f0d1ec073b8376102fc51427dcc inc/Module/Install/Can.pm
-SHA1 b779375b90c16af2f31f38a1dd2b5df223c7f2fb inc/Module/Install/Fetch.pm
-SHA1 2054450e1e9c1dd8056362bf4a64ae70d5d71476 inc/Module/Install/Makefile.pm
-SHA1 5d6189b2cad15cf9932a28faafd55130c8247e83 inc/Module/Install/Metadata.pm
-SHA1 02af973fae2ac3531fa6b704574b2b8cb2a08148 inc/Module/Install/Win32.pm
-SHA1 3a2eab96e91cca8d99938cda7791759ae9d97b3a inc/Module/Install/WriteAll.pm
+SHA1 7e2cfa1b9efe0d502ee57717649c90ba4bd28ba9 inc/Module/Install.pm
+SHA1 6e1392d80a0f239eecd5664f7f21f922cedb9329 inc/Module/Install/Base.pm
+SHA1 f69417fe831d9cc22a78f00a617afadceade4d81 inc/Module/Install/Can.pm
+SHA1 c61d02895330310048bf388881b5e2e064031561 inc/Module/Install/Fetch.pm
+SHA1 54fcbed19232ec959bb17cfb4410599afc7f0779 inc/Module/Install/Makefile.pm
+SHA1 7d3be9b158e37b2b2c22084740099955623b1d56 inc/Module/Install/Metadata.pm
+SHA1 0a8b66180229ba2f9deaea1fedd0aacf7a7ace6b inc/Module/Install/Win32.pm
+SHA1 d3352eb33fe43a5f3ead513f645224fe34d73bc9 inc/Module/Install/WriteAll.pm
 SHA1 7759b3334b0c1c565c569e2cb1add21cd4ba1285 lib/HTTP/Server/Simple.pm
 SHA1 40f24374f2b5845a3025e14ca4b91bd58298de03 lib/HTTP/Server/Simple/CGI.pm
-SHA1 47ef836a1cdd03add505dd4c90819cafb61dc565 lib/HTTP/Server/Simple/CGI/Environment.pm
+SHA1 99ec6998826486bbc5775b222408e6baf40dc885 lib/HTTP/Server/Simple/CGI/Environment.pm
 SHA1 db064af54cab345a71daec576e32e64b8fb1033d t/00smoke.t
 SHA1 056937a1ada4dde77eaff5afa0d76445cd0f3a02 t/01live.t
 SHA1 aca95653cfce68912e08c57b3a4566207e2f99b3 t/02pod.t
 SHA1 a7024d0d8e7b80d26f75a3551a1406a797b382f8 t/03podcoverage.t
-SHA1 354a5265b406fa5c183446cfb2bc98738815dbda t/04cgi.t
+SHA1 e19b6afffd4ced1f89832080822686f49a155688 t/04cgi.t
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.8 (Darwin)
 
-iD8DBQFIEI8OEi9d9xCOQEYRAn4yAJ0be0Uu3edsKXoHbTYyaR5HH6By6QCffNFb
-kTbMh5uu0h4WrqKGhcyEAtI=
-=9G1L
+iD8DBQFIEI9oEi9d9xCOQEYRAn3KAJ0R+NjO12veBgG2HgeDHgsYm+1vywCdFuf/
+3ix6/hk5oAZS603DcrZwtzs=
+=aKFO
 -----END PGP SIGNATURE-----
