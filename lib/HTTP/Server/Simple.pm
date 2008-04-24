@@ -9,7 +9,7 @@ use URI::Escape;
 use IO::Select;
 
 use vars qw($VERSION $bad_request_doc);
-$VERSION = '0.31';
+$VERSION = '0.32';
 
 
 =head1 NAME

@@ -1,3 +1,7 @@
+0.32 Thu Apr 24 09:45:14 EDT 2008
+
+* Patch from ntyni@iki.fi to make backgrounding of the standalone server's server process deterministic. [rt.cpan.org #28122]
+
 0.31 Sun Mar 16 20:51:04 EDT 2008
 
 * Test suite parallelization fixes. Thanks to Slaven Rezic
