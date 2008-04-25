@@ -6,10 +6,9 @@ use FileHandle;
 use Socket;
 use Carp;
 use URI::Escape;
-use IO::Select;
 
 use vars qw($VERSION $bad_request_doc);
-$VERSION = '0.32';
+$VERSION = '0.33';
 
 
 =head1 NAME
@@ -216,31 +215,15 @@ Run the server in the background. returns pid.
 
 sub background {
     my $self  = shift;
-
-    # set up a pipe so the child can tell the parent when it's ready
-    # to accept requests
-    my ($readfh, $writefh) = FileHandle::pipe;
-
     my $child = fork;
     die "Can't fork: $!" unless defined($child);
-    if ($child) { # parent
-        my $s = IO::Select->new;
-        $s->add($readfh);
-        my @ready = $s->can_read(5);
-        die("child unresponsive for 5 seconds") if !@ready;
-        my $response = <$readfh>;
-        chomp $response;
-        die("child is confused: answer '$response' != 'OK'")
-            if $response ne "OK";
-        return $child;
-    }    
+    return $child if $child;
 
     if ( $^O !~ /MSWin32/ ) {
         require POSIX;
         POSIX::setsid()
             or die "Can't start a new session: $!";
     }
-    $self->{_parent_handle} = $writefh;
     $self->run();
 }
 
@@ -280,7 +263,6 @@ sub run {
 	$self->after_setup_listener();
         *{"$pkg\::run"} = $self->_default_run;
     }
-    $self->_maybe_tell_parent();
 
     local $SIG{HUP} = sub { $SERVER_SHOULD_RUN = 0; };
 
@@ -418,15 +400,6 @@ sub _process_request {
         }
 }
 
-sub _maybe_tell_parent {
-    # inform the parent process that we're ready, if applicable
-    my $self = shift;
-    my $handle = $self->{_parent_handle};
-    return if !$handle;
-    print $handle "OK\n";
-    close $handle;
-    delete $self->{_parent_handle};
-}
 
 
 

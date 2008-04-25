@@ -1,3 +1,7 @@
+0.33 Fri Apr 25 13:57:30 EDT 2008
+
+* The new support for background processes notifying the parent didn't quite work right for some apps using HSS. It's been reverted for now and the tests TODOED
+
 0.32 Thu Apr 24 09:45:14 EDT 2008
 
 * At least Apache and lighttpd put unencoded strings into PATH_INFO, so so should we.
