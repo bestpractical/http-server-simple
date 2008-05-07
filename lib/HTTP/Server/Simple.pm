@@ -636,7 +636,7 @@ sub parse_headers {
     while ( sysread( STDIN, my $buff, 1 ) ) {
         if ( $buff eq "\n" ) {
             $chunk =~ s/[\r\l\n\s]+$//;
-            if ( $chunk =~ /^([\w\-]+): (.+)/i ) {
+            if ( $chunk =~ /^([^()<>\@,;:\\"\/\[\]?={} \t]+):\s*(.*)/i ) {
                 push @headers, $1 => $2;
             }
             last if ( $chunk =~ /^$/ );
