@@ -256,7 +256,6 @@ sub run {
     if ($server) {
         require join( '/', split /::/, $server ) . '.pm';
         *{"$pkg\::ISA"} = [$server];
-        $self->print_banner;
     }
     else {
         $self->setup_listener;
