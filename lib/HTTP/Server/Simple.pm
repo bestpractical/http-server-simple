@@ -256,6 +256,14 @@ sub run {
     if ($server) {
         require join( '/', split /::/, $server ) . '.pm';
         *{"$pkg\::ISA"} = [$server];
+
+        # clear the environment before every request
+        require HTTP::Server::Simple::CGI;
+        *{"$pkg\::post_accept"} = sub {
+            HTTP::Server::Simple::CGI::Environment->setup_environment;
+            # $self->SUPER::post_accept uses the wrong super package
+            $server->can('post_accept')->(@_);
+        };
     }
     else {
         $self->setup_listener;
