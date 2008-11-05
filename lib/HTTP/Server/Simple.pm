@@ -8,7 +8,7 @@ use Carp;
 use URI::Escape;
 
 use vars qw($VERSION $bad_request_doc);
-$VERSION = '0.34';
+$VERSION = '0.35';
 
 
 =head1 NAME
@@ -224,7 +224,7 @@ sub background {
         POSIX::setsid()
             or die "Can't start a new session: $!";
     }
-    $self->run();
+    $self->run(@_);
 }
 
 =head2 run
@@ -273,7 +273,7 @@ sub run {
 
     local $SIG{HUP} = sub { $SERVER_SHOULD_RUN = 0; };
 
-    $pkg->run( port => $self->port );
+    $pkg->run( port => $self->port, @_ );
 }
 
 =head2 net_server
