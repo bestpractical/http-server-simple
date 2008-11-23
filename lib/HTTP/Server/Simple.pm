@@ -216,13 +216,13 @@ Run the server in the background. returns pid.
 sub background {
     my $self  = shift;
     my $child = fork;
-    die "Can't fork: $!" unless defined($child);
+    croak "Can't fork: $!" unless defined($child);
     return $child if $child;
 
     if ( $^O !~ /MSWin32/ ) {
         require POSIX;
         POSIX::setsid()
-            or die "Can't start a new session: $!";
+            or croak "Can't start a new session: $!";
     }
     $self->run(@_);
 }
@@ -473,7 +473,7 @@ sub handler {
         croak "do not call " . ref($self) . "::SUPER->handler";
     }
     else {
-        die "handler called out of context";
+        croak "handler called out of context";
     }
 }
 
@@ -665,8 +665,7 @@ sub setup_listener {
     my $self = shift;
 
     my $tcp = getprotobyname('tcp');
-
-    socket( HTTPDaemon, PF_INET, SOCK_STREAM, $tcp ) or die "socket: $!";
+    socket( HTTPDaemon, PF_INET, SOCK_STREAM, $tcp ) or croak "socket: $!";
     setsockopt( HTTPDaemon, SOL_SOCKET, SO_REUSEADDR, pack( "l", 1 ) )
         or warn "setsockopt: $!";
     bind( HTTPDaemon,
@@ -678,8 +677,8 @@ sub setup_listener {
             )
         )
         )
-        or die "bind: $!";
-    listen( HTTPDaemon, SOMAXCONN ) or die "listen: $!";
+        or croak "bind to @{[$self->host||'*']}:@{[$self->port]}: $!";
+    listen( HTTPDaemon, SOMAXCONN ) or croak "listen: $!";
 
 }
 
