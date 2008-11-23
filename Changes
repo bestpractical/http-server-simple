@@ -1,3 +1,7 @@
+0.36
+
+* Documentation fixups
+
 0.35
 
 * Pass arguments to ->run through to Net::Server->run

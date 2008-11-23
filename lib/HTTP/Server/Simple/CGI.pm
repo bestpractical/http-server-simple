@@ -35,7 +35,8 @@ sub accept_hook {
 
 =head2 post_setup_hook
 
-
+Initializes the global L<CGI> object, as well as other environment
+settings.
 
 =cut
 

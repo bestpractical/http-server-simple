@@ -14,10 +14,10 @@ not run its Makefile.PL or Build.PL.
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-SHA1 7b03368caeaf04a1584735e0fe874d4008fc84e6 Changes
+SHA1 af311b6f977e690ad39ff86b71e6d3bb611b7d6a Changes
 SHA1 0ac508c50476dcc2bf8fe3094cb341425291e1ee MANIFEST
-SHA1 7812a1c898acbf76fcccb52068b2a9c23cb86bbf META.yml
-SHA1 3a02ba613b11b07dd1fa97e2a6b962ee3e039c98 Makefile.PL
+SHA1 cf3198cef8524b06b0f6df065b577225caf74a69 META.yml
+SHA1 1e68273869351212220429a4860ce710d5f3e291 Makefile.PL
 SHA1 ed0c107672daac3bc9e266876666e1059dbe44b7 README
 SHA1 4ea1e9072ca87399184a46233df52a21e285604d ex/sample_server
 SHA1 7e2cfa1b9efe0d502ee57717649c90ba4bd28ba9 inc/Module/Install.pm
@@ -28,9 +28,9 @@ SHA1 54fcbed19232ec959bb17cfb4410599afc7f0779 inc/Module/Install/Makefile.pm
 SHA1 7d3be9b158e37b2b2c22084740099955623b1d56 inc/Module/Install/Metadata.pm
 SHA1 0a8b66180229ba2f9deaea1fedd0aacf7a7ace6b inc/Module/Install/Win32.pm
 SHA1 d3352eb33fe43a5f3ead513f645224fe34d73bc9 inc/Module/Install/WriteAll.pm
-SHA1 25a12297b6480dc17861d2c294dd8357732d6350 lib/HTTP/Server/Simple.pm
-SHA1 40f24374f2b5845a3025e14ca4b91bd58298de03 lib/HTTP/Server/Simple/CGI.pm
-SHA1 99ec6998826486bbc5775b222408e6baf40dc885 lib/HTTP/Server/Simple/CGI/Environment.pm
+SHA1 47c1b14c60d44388818e99b86f58d3a688e6f7a1 lib/HTTP/Server/Simple.pm
+SHA1 3ddd188b0ee926a7e114e711b88c0af69b9a9079 lib/HTTP/Server/Simple/CGI.pm
+SHA1 56e2d88c9a3ddd3b264d86279a52c099bbffa8f4 lib/HTTP/Server/Simple/CGI/Environment.pm
 SHA1 db064af54cab345a71daec576e32e64b8fb1033d t/00smoke.t
 SHA1 c58cc41a260213d9aeb4bed7b6c2926a37a3402a t/01live.t
 SHA1 aca95653cfce68912e08c57b3a4566207e2f99b3 t/02pod.t
@@ -39,7 +39,7 @@ SHA1 e19b6afffd4ced1f89832080822686f49a155688 t/04cgi.t
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.9 (GNU/Linux)
 
-iEYEARECAAYFAkjb9vEACgkQMflWJZZAbqBJfQCfanhxRlw+b1pXLDn5kG1Dztqs
-hxEAoKrQOkRZMbMmtf5otR/k5WuEgyFl
-=XzP2
+iEYEARECAAYFAkko/RgACgkQMflWJZZAbqAOHwCgmAefircgIQo/xfW4s32oRUpV
+f5kAoIJYFbQn+PhGq0Nb0l23P1M5AHBs
+=KgDS
 -----END PGP SIGNATURE-----

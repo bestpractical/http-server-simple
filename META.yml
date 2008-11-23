@@ -16,4 +16,4 @@ requires:
   Socket: 0
   Test::More: 0
   URI::Escape: 0
-version: 0.31
+version: 0.36

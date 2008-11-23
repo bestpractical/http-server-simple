@@ -8,13 +8,11 @@ use Carp;
 use URI::Escape;
 
 use vars qw($VERSION $bad_request_doc);
-$VERSION = '0.35';
-
+$VERSION = '0.36';
 
 =head1 NAME
 
 HTTP::Server::Simple - Lightweight HTTP server
-
 
 =head1 SYNOPSIS
 
@@ -44,14 +42,13 @@ module (see L<HTTP::Server::Simple::CGI>);
 
 =head1 DESCRIPTION
 
-This is a simple standalone HTTP server. By default, it doesn't thread 
-or fork.
-
-It does, however, act as a simple frontend which can be used 
+This is a simple standalone HTTP server. By default, it doesn't thread
+or fork. It does, however, act as a simple frontend which can be used
 to build a standalone web-based application or turn a CGI into one.
 
-(It's possible to use Net::Server to get threading, forking,
-preforking and so on. Autrijus Tang wrote the functionality and owes docs for that ;)
+It is possible to use L<Net::Server> classes to create forking,
+pre-forking, and other types of more complicated servers; see
+L</net_server>.
 
 By default, the server traps a few signals:
 
@@ -70,7 +67,7 @@ HUP to all running processes spawned by your app (e.g. by "kill -HUP <script>")
 
 If the server detects a broken pipe while writing output to the client, 
 it ignores the signal. Otherwise, a client closing the connection early 
-could kill the server
+could kill the server.
 
 =back
 
@@ -126,12 +123,12 @@ could kill the server
  my $pid = MyWebServer->new(8080)->background();
  print "Use 'kill $pid' to stop server.\n";
 
-=head1 METHODS 
+=head1 METHODS
 
 =head2 HTTP::Server::Simple->new($port)
 
 API call to start a new server.  Does not actually start listening
-until you call C<-E<gt>run()>.
+until you call C<-E<gt>run()>.  If omitted, C<$port> defaults to 8080.
 
 =cut
 
@@ -148,19 +145,14 @@ sub new {
     bless( $self, $class );
     $self->port( $port || '8080' );
 
-
-
     return $self;
 }
 
 
 =head2 lookup_localhost
 
-Looks up the local host's hostname and IP address.
-
-Stuffs them into
-
-$self->{'localname'} and $self->{'localaddr'}
+Looks up the local host's IP address, and returns it.  For most hosts,
+this is C<127.0.0.1>.
 
 =cut
 
@@ -172,8 +164,6 @@ sub lookup_localhost {
     $self->host( gethostbyaddr( $localiaddr, AF_INET ) || "localhost");
     $self->{'local_addr'} = inet_ntoa($localiaddr) || "127.0.0.1";
 }
-
-
 
 
 =head2 port [NUMBER]
@@ -207,9 +197,10 @@ sub host {
 
 }
 
-=head2 background
+=head2 background [ARGUMENTS]
 
-Run the server in the background. returns pid.
+Runs the server in the background, and returns the process ID of the
+started process.  Any arguments will be passed through to L</run>.
 
 =cut
 
@@ -227,10 +218,12 @@ sub background {
     $self->run(@_);
 }
 
-=head2 run
+=head2 run [ARGUMENTS]
 
 Run the server.  If all goes well, this won't ever return, but it will
-start listening for http requests.
+start listening for C<HTTP> requests.  Any arguments passed to this
+will be passed on to the underlying L<Net::Server> implementation, if
+one is used (see L</net_server>).
 
 =cut
 
@@ -278,8 +271,8 @@ sub run {
 
 =head2 net_server
 
-User-overridable method. If you set it to a C<Net::Server> subclass,
-that subclass is used for the C<run> method.  Otherwise, a minimal 
+User-overridable method. If you set it to a L<Net::Server> subclass,
+that subclass is used for the C<run> method.  Otherwise, a minimal
 implementation is used as default.
 
 =cut
@@ -404,12 +397,8 @@ sub _process_request {
         $self->post_setup_hook if $self->can("post_setup_hook");
 
         $self->handler;
-        }
+    }
 }
-
-
-
-
 
 =head2 stdio_handle [FILEHANDLE]
 
@@ -430,9 +419,9 @@ sub stdio_handle {
 
 =head2 stdin_handle
 
-Returns a filehandle used for input from the client.  By default, 
-returns whatever was set with C<stdio_handle>, but a subclass
-could do something interesting here (see L<HTTP::Server::Simple::Logger>).
+Returns a filehandle used for input from the client.  By default,
+returns whatever was set with C<stdio_handle>, but a subclass could do
+something interesting here.
 
 =cut
 
@@ -445,7 +434,7 @@ sub stdin_handle {
 
 Returns a filehandle used for output to the client.  By default, 
 returns whatever was set with C<stdio_handle>, but a subclass
-could do something interesting here (see L<HTTP::Server::Simple::Logger>).
+could do something interesting here.
 
 =cut
 
@@ -538,10 +527,9 @@ sub headers {
     my $headers = shift;
 
     my $can_header = $self->can("header");
+    return unless $can_header;
     while ( my ( $header, $value ) = splice @$headers, 0, 2 ) {
-        if ($can_header) {
-            $self->header( $header => $value );
-        }
+        $self->header( $header => $value );
     }
 }
 
@@ -596,11 +584,8 @@ sub print_banner {
 
 =head2 parse_request
 
-Parse the HTTP request line.
-
-Returns three values, the request method, request URI and the protocol
-Sub-classed versions of this should return three values - request
-method, request URI and proto
+Parse the HTTP request line.  Returns three values, the request
+method, request URI and the protocol.
 
 =cut
 
@@ -624,13 +609,9 @@ sub parse_request {
 
 =head2 parse_headers
 
-Parse incoming HTTP headers from STDIN.
-
-Remember, this is a B<simple> HTTP server, so nothing intelligent is
-done with them C<:-)>.
-
-This should return an ARRAY ref of C<(header =E<gt> value)> pairs
-inside the array.
+Parses incoming HTTP headers from STDIN, and returns an arrayref of
+C<(header =E<gt> value)> pairs.  See L</headers> for possibilities on
+how to inspect headers.
 
 =cut
 
@@ -685,7 +666,8 @@ sub setup_listener {
 
 =head2 after_setup_listener
 
-This method is called immediately after setup_listener. It's here just for you to override.
+This method is called immediately after setup_listener. It's here just
+for you to override.
 
 =cut
 
@@ -712,7 +694,9 @@ sub bad_request {
 =head2 valid_http_method($method)
 
 Given a candidate HTTP method in $method, determine if it is valid.
-Override if, for example, you'd like to do some WebDAV.
+Override if, for example, you'd like to do some WebDAV.  The default
+implementation only accepts C<GET>, C<POST>, C<HEAD>, C<PUT>, and
+C<DELETE>.
 
 =cut 
 

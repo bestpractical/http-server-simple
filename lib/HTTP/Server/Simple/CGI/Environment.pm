@@ -16,9 +16,9 @@ HTTP::Server::Simple::CGI::Environment - a HTTP::Server::Simple mixin to provide
 
 =head1 DESCRIPTION
 
-This mixin abstracts the CGI protocol out from HTTP::Server::Simple::CGI so that 
-it's easier to provide your own CGI handlers with HTTP::Server::Simple which 
-B<don't> use CGI.pm
+This mixin abstracts the CGI protocol out from
+L<HTTP::Server::Simple::CGI> so that it's easier to provide your own
+CGI handlers with L<HTTP::Server::Simple> which B<don't> use CGI.pm
 
 =head2 setup_environment
 
@@ -39,7 +39,7 @@ sub setup_environment {
 
 =head2 setup_server_url
 
-Sets up the SERVER_URL environment variable
+Sets up the C<SERVER_URL> environment variable
 
 =cut
 
