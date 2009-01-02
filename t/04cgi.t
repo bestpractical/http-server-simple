@@ -32,7 +32,7 @@ my %envvars=(
 {
   my $server=CGIServer->new($PORT);
   is($server->port(),$PORT,'Constructor set port correctly');
-  select(undef,undef,undef,0.2); # wait a sec
+  sleep(3); # wait just a moment
 
   my $pid=$server->background;
 

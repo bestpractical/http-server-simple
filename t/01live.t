@@ -20,24 +20,18 @@ package SlowServer;
 use base qw(HTTP::Server::Simple::CGI);
 sub setup_listener {
     my $self = shift;
-    sleep 2;
     $self->SUPER::setup_listener();
+    sleep 2;
 }
 1;
 package main;
 
 my $DEBUG = 1 if @ARGV;
 
-my @classes = (qw(HTTP::Server::Simple));
+my @classes = (qw(HTTP::Server::Simple SlowServer));
 for my $class (@classes) {
     run_server_tests($class);
-}
-
-
-TODO: { 
-    local $TODO = "We don't currently wait for 'server is running' responses from the client";
-    run_server_tests('SlowServer');
-
+    $PORT++; # don't reuse the port incase your bogus os doesn't release in time
 }
 
 
