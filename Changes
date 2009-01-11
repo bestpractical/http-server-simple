@@ -1,3 +1,7 @@
+0.38 Sun Jan 11 14:42:57 EST 2009
+
+* Improve startup banner generation
+
 0.37 Fri Jan  2 12:21:30 EST 2009
 
 * Several fixes for [rt.cpan.org #38011] designed to help get HSS to pass tests on Strawberry Perl

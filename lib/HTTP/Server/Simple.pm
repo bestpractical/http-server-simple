@@ -8,7 +8,7 @@ use Carp;
 use URI::Escape;
 
 use vars qw($VERSION $bad_request_doc);
-$VERSION = '0.37';
+$VERSION = '0.38';
 
 =head1 NAME
 
@@ -574,7 +574,7 @@ yourself in subclasses.
 sub print_banner {
     my $self = shift;
 
-    print(    __PACKAGE__
+    print( ref($self) 
             . ": You can connect to your server at "
             . "http://localhost:"
             . $self->port
