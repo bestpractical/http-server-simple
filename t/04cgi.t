@@ -60,13 +60,13 @@ my %envvars=(
   }
 
   like(
-       fetch("GET /cgitest/REQUEST_URI?foo%3Fbar",""),
+       fetch("GET /cgitest/REQUEST_URI?foo%3Fbar HTTP/1.0",""),
        qr/foo%3Fbar/,
        "Didn't decode already"
       );
 
   like(
-       fetch("GET /cgitest/foo%2Fbar/PATH_INFO",""),
+       fetch("GET /cgitest/foo%2Fbar/PATH_INFO HTTP/1.0",""),
        qr|foo/bar|,
        "Did decode already"
       );
