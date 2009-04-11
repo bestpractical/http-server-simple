@@ -1,3 +1,7 @@
+0.38_02 Fri Apr 10 20:57:19 EDT 2009
+
+* Specify an HTTP version for our GETs should get escaping to wokr
+
 0.38_01 Mon Mar  2 18:11:46 EST 2009
 * http://rt.cpan.org/Ticket/Attachment/568795/286902/ from confound++ for 
   http://rt.cpan.org/Public/Bug/Display.html?id=28122
