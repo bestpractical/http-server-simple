@@ -21,7 +21,7 @@ my %envvars=(
               SERVER_PORT => 'SERVER_PORT: '.$PORT,
               REQUEST_METHOD => 'REQUEST_METHOD: GET',
               REQUEST_URI => 'REQUEST_URI: /cgitest/REQUEST_URI',
-              SERVER_PROTOCOL => 'SERVER_PROTOCOL: HTTP/1.1',
+              SERVER_PROTOCOL => 'SERVER_PROTOCOL: HTTP/0.9',
               SERVER_NAME => "SERVER_NAME: $host",
               SERVER_SOFTWARE => 'SERVER_SOFTWARE: HTTP::Server::Simple/\d+.\d+',
               REMOTE_ADDR => 'REMOTE_ADDR: 127.0.0.1',
@@ -43,7 +43,7 @@ my %envvars=(
 
   foreach my $method (keys(%methods)) {
     like(
-          fetch("GET /cgitest/$method HTTP/1.1",""),
+          fetch("GET /cgitest/$method"),
           "/$methods{$method}/",
           "method - $method"
         );
@@ -52,7 +52,7 @@ my %envvars=(
 
   foreach my $envvar (keys(%envvars)) {
     like(
-          fetch("GET /cgitest/$envvar HTTP/1.1",""),
+          fetch("GET /cgitest/$envvar"),
           "/$envvars{$envvar}/",
           "Environment - $envvar"
         );
