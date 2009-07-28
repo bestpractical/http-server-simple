@@ -3,7 +3,7 @@ use Socket;
 use strict;
 
 plan tests => 22;
-my $PORT = 8000 + $$;
+my $PORT = 40000 + int(rand(10000));
 
 my $host = gethostbyaddr(inet_aton('localhost'), AF_INET);
 

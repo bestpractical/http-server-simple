@@ -7,7 +7,7 @@ use strict;
 # This script assumes that `localhost' will resolve to a local IP
 # address that may be bound to,
 
-my $PORT = 8000 + $$;
+my $PORT = 40000 + int(rand(10000));
 
 
 use HTTP::Server::Simple;
@@ -40,7 +40,7 @@ for my $class (@classes) {
     my $s=HTTP::Server::Simple::CGI->new($PORT);
     $s->host("localhost");
     my $pid=$s->background();
-    diag("started server on $pid");
+    diag("started server PID=$pid");
     like($pid, '/^-?\d+$/', 'pid is numeric');
     select(undef,undef,undef,0.2); # wait a sec
     my $content=fetch("GET / HTTP/1.1", "");
