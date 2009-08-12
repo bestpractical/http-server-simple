@@ -21,7 +21,7 @@ my %envvars=(
               SERVER_PORT => 'SERVER_PORT: '.$PORT,
               REQUEST_METHOD => 'REQUEST_METHOD: GET',
               REQUEST_URI => 'REQUEST_URI: /cgitest/REQUEST_URI',
-              SERVER_PROTOCOL => 'SERVER_PROTOCOL: HTTP/0.9',
+              SERVER_PROTOCOL => 'SERVER_PROTOCOL: HTTP/1.1',
               SERVER_NAME => "SERVER_NAME: $host",
               SERVER_SOFTWARE => 'SERVER_SOFTWARE: HTTP::Server::Simple/\d+.\d+',
               REMOTE_ADDR => 'REMOTE_ADDR: 127.0.0.1',
@@ -43,7 +43,7 @@ my %envvars=(
 
   foreach my $method (keys(%methods)) {
     like(
-          fetch("GET /cgitest/$method"),
+          fetch("GET /cgitest/$method HTTP/1.1",""),
           "/$methods{$method}/",
           "method - $method"
         );
@@ -52,7 +52,7 @@ my %envvars=(
 
   foreach my $envvar (keys(%envvars)) {
     like(
-          fetch("GET /cgitest/$envvar"),
+          fetch("GET /cgitest/$envvar HTTP/1.1",""),
           "/$envvars{$envvar}/",
           "Environment - $envvar"
         );
@@ -78,71 +78,45 @@ my %envvars=(
 
 
 sub fetch {
+    my $hostname = "localhost";
+    my $port = $PORT;
+    my $message = join "", map { "$_\015\012" } @_;
+    my $timeout = 5;    
+    my $response;        
+    
+    eval {
+        local $SIG{ALRM} = sub { die "early exit - SIGALRM caught" };
+        alarm $timeout*2; #twice longer than timeout used later by select()  
+ 
+        my $iaddr = inet_aton($hostname) || die "inet_aton: $!";
+        my $paddr = sockaddr_in($port, $iaddr) || die "sockaddr_in: $!";
+        my $proto = getprotobyname('tcp') || die "getprotobyname: $!";
+        socket(SOCK, PF_INET, SOCK_STREAM, $proto) || die "socket: $!";
+        connect(SOCK, $paddr) || die "connect: $!";
+        (send SOCK, $message, 0) || die "send: $!";
+        
+        my $rvec = '';
+        vec($rvec, fileno(SOCK), 1) = 1;
+        die "vec(): $!" unless $rvec; 
 
-    my @response;
-    my $alarm = 0;
-    my $stage = "init";
-
-    my %messages =
-	( "init" => "inner contemplation",
-	  "lookup" => ("lookup of `localhost' - may be caused by a "
-		       ."missing hosts entry or broken resolver"),
-	  "sockaddr" => "call to sockaddr_in() - ?",
-	  "proto" => ("call to getprotobyname() - may be caused by "
-		      ."bizarre NSS configurations"),
-	  "socket" => "socket creation",
-	  "connect" => ("connect() - may be caused by a missing or "
-			."broken loopback interface, or firewalling"),
-	  "send" => "network send()",
-	  "recv" => "collection of response",
-	  "close" => "closing socket"
-	);
-
-    $SIG{ALRM} = sub {
-	@response = "timed out during $messages{$stage}";
-	$alarm = 1;
-    };
-
-    my ($iaddr, $paddr, $proto, $message);
-
-    $message = join "", map { "$_\015\012" } @_;
-
-    my %states =
-	( 'init'     => sub { "lookup"; },
-	  "lookup"   => sub { ($iaddr = inet_aton("localhost"))
-				  && "sockaddr"			    },
-	  "sockaddr" => sub { ($paddr = sockaddr_in($PORT, $iaddr))
-				  && "proto"			    },
-	  "proto"    => sub { ($proto = getprotobyname('tcp'))
-				  && "socket"			    },
-	  "socket"   => sub { socket(SOCK, PF_INET, SOCK_STREAM, $proto)
-				  && "connect"			    },
-	  "connect"  => sub { connect(SOCK, $paddr) && "send"	    },
-	  "send"     => sub { (send SOCK, $message, 0) && "recv"    },
-	  "recv"     => sub {
-	      my $line;
-	      while (!$alarm and defined($line = <SOCK>)) {
-		  push @response, $line;
-	      }
-	      ($alarm ? undef : "close");
-	  },
-	  "close"    => sub { close SOCK; "done"; },
-	);
-
-    # this entire cycle should finish way before this timer expires
-    alarm(5);
-
-    my $next;
-    $stage = $next
-	while (!$alarm && $stage ne "done"
-	       && ($next = $states{$stage}->()));
-
-    warn "early exit from `$stage' stage; $!" unless $next;
-
-    # bank on the test testing for something in the response.
-    return join "", @response;
-
-
+        $response = '';
+        for (;;) {        
+            my $r = select($rvec, undef, undef, $timeout);
+            die "select: timeout - no data to read from server" unless ($r > 0);
+            my $l = sysread(SOCK, $response, 1024, length($response));
+            die "sysread: $!" unless defined($l);
+            last if ($l == 0);
+        }
+        $response =~ s/\015\012/\n/g; 
+        (close SOCK) || die "close(): $!";
+        alarm 0;
+    }; 
+    if ($@) {
+      	return "[ERROR] $@";
+    }
+    else {
+        return $response;
+    }    
 }
 
 {
@@ -171,4 +145,5 @@ sub fetch {
     print length($response), "\r\n\r\n", $response;
   }
 }
+
 
