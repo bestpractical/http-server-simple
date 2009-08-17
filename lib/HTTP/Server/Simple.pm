@@ -8,7 +8,7 @@ use Carp;
 use URI::Escape;
 
 use vars qw($VERSION $bad_request_doc);
-$VERSION = '0.38_04';
+$VERSION = '0.39';
 
 =head1 NAME
 
