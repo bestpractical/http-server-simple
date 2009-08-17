@@ -10,4 +10,4 @@ requires(
     URI::Escape => 0
 );
 
-WriteAll();
+WriteAll( sign => 1);
