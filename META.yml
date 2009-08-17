@@ -1,19 +1,25 @@
---- 
+---
 author: ~
+build_requires:
+  ExtUtils::MakeMaker: 6.42
+configure_requires:
+  ExtUtils::MakeMaker: 6.42
 distribution_type: module
-generated_by: Module::Install version 0.68
+generated_by: 'Module::Install version 0.91'
 license: perl
-meta-spec: 
-  url: http://module-build.sourceforge.net/META-spec-v1.3.html
-  version: 1.3
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
 name: HTTP-Server-Simple
-no_index: 
-  directory: 
+no_index:
+  directory:
     - inc
     - t
-requires: 
+requires:
   CGI: 0
   Socket: 0
   Test::More: 0
   URI::Escape: 0
-version: 0.36
+resources:
+  license: http://dev.perl.org/licenses/
+version: 0.39
