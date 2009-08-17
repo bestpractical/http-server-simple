@@ -18,6 +18,7 @@ README
 Changes
 SIGNATURE
 t/00smoke.t
+t/00signature.t
 t/01live.t
 t/02pod.t
 t/03podcoverage.t
