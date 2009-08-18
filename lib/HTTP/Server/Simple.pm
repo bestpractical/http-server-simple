@@ -8,7 +8,7 @@ use Carp;
 use URI::Escape;
 
 use vars qw($VERSION $bad_request_doc);
-$VERSION = '0.39';
+$VERSION = '0.40';
 
 =head1 NAME
 
@@ -210,6 +210,8 @@ sub background {
     croak "Can't fork: $!" unless defined($child);
     return $child if $child;
 
+    srand(); # after a fork, we need to reset the random seed
+             # or we'll get the same numbers in both branches
     if ( $^O !~ /MSWin32/ ) {
         require POSIX;
         POSIX::setsid()
