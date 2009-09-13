@@ -1,3 +1,8 @@
+
+0.40_01
+
+* HTTP header concatenation fixes from miyagawa
+
 0.40 Mon Aug 17 22:01:07 EDT 2009
 
 * After a fork, we need to reset the random seed lest we have 
