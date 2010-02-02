@@ -1,3 +1,6 @@
+0.41_01 Tue Feb  2 12:08:15 PST 2010
+
+* Pluggable CGI class support based on a patch from NANIS
 
 0.41 Tue Sep 29 23:05:04 JST 2009
 
