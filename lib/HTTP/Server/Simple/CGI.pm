@@ -5,10 +5,12 @@ use base qw(HTTP::Server::Simple HTTP::Server::Simple::CGI::Environment);
 use strict;
 use warnings;
 
-use CGI ();
-
-use vars qw($VERSION $default_doc);
+use vars qw($VERSION $default_doc $DEFAULT_CGI_INIT $DEFAULT_CGI_CLASS);
 $VERSION = $HTTP::Server::Simple::VERSION;
+
+$DEFAULT_CGI_CLASS = "CGI";
+$DEFAULT_CGI_INIT = sub { require CGI; CGI::initialize_globals()};
+
 
 =head1 NAME
 
@@ -43,8 +45,66 @@ settings.
 sub post_setup_hook {
     my $self = shift;
     $self->setup_server_url;
-    CGI::initialize_globals();
+    if ( my $init = $self->cgi_init ) {
+        $init->();
+    }
 }
+
+=head2 cgi_class [Classname]
+
+Gets or sets the class to use for creating the C<$cgi> object passed to
+C<handle_request>.
+
+Called with a single argument, it sets the coderef. Called with no arguments, 
+it returns this field's current value.
+
+To provide an initialization subroutine to be run in the post_setup_hook, 
+see L</cgi_init>.
+
+e.g.
+
+    $server->cgi_class('CGI');
+
+    $server->cgi_init(sub {
+        require CGI;
+        CGI::initialize_globals();
+    });
+
+or, if you want to use L<CGI::Simple>,
+
+    $server->cgi_class('CGI::Simple');
+    $server->cgi_init(sub {
+        require CGI::Simple;
+    });
+
+=cut
+
+sub cgi_class {
+    my $self = shift;
+    if (@_) {
+        $self->{cgi_class} = shift;
+    }
+    return $self->{cgi_class} || $DEFAULT_CGI_CLASS;
+}
+
+=head2 cgi_init [CODEREF]
+
+A coderef to run in the post_setup_hook.
+
+Called with a single argument, it sets the coderef. Called with no arguments, 
+it returns this field's current value.
+
+=cut
+
+sub cgi_init {
+    my $self = shift;
+    if (@_) {
+        $self->{cgi_init} = shift;
+    }
+    return $self->{cgi_init} || $DEFAULT_CGI_INIT;
+    
+}
+
 
 =head2 setup
 
@@ -89,7 +149,8 @@ Handler implemented as part of HTTP::Server::Simple API
 
 sub handler {
     my $self = shift;
-    my $cgi  = new CGI();
+    my $cgi;
+    $cgi = $self->cgi_class->new;
     eval { $self->handle_request($cgi) };
     if ($@) {
         my $error = $@;
