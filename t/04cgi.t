@@ -2,7 +2,7 @@ use Test::More;
 use Socket;
 use strict;
 
-plan tests => 22;
+plan tests => 23;
 my $PORT = 40000 + int(rand(10000));
 
 my $host = gethostbyaddr(inet_aton('localhost'), AF_INET);
@@ -14,6 +14,7 @@ my %methods=(
               server_port => 'server_port: '.$PORT,
               server_software => 'server_software: HTTP::Server::Simple/\d+.\d+',
               request_method => 'request_method: GET',
+              raw_cookie => undef, # do not test
             );
 
 my %envvars=(
@@ -42,6 +43,7 @@ my %envvars=(
   like(fetch("GET / HTTP/1.1",""), '/NOFILE/', 'no file');
 
   foreach my $method (keys(%methods)) {
+    next unless defined $methods{$method};
     like(
           fetch("GET /cgitest/$method HTTP/1.1",""),
           "/$methods{$method}/",
@@ -71,6 +73,11 @@ my %envvars=(
        "Did decode already"
       );
 
+  like(
+      fetch("GET /cgitest/raw_cookie HTTP/1.0","Cookie: foo=bar",""),
+      qr|foo=bar|,
+      "uses HTTP_COOKIE",
+  );
 
   is(kill(9,$pid),1,'Signaled 1 process successfully');
   wait or die "counldn't wait for sub-process completion";
@@ -135,7 +142,7 @@ sub fetch {
     print "HTTP/1.0 200 OK\r\n";    # probably OK by now
     print "Content-Type: text/html\r\nContent-Length: ";
     my $response;
-    if($methods{$file}) {
+    if(exists $methods{$file}) {
       $response = "$file: ".$cgi->$file();
     } elsif($envvars{$file}) {
       $response="$file: $ENV{$file}";

@@ -102,7 +102,7 @@ sub header {
     $tag =~ s/^COOKIES$/COOKIE/;
     $tag =~ s/-/_/g;
     $tag = "HTTP_" . $tag
-        unless $tag =~ m/^(?:CONTENT_(?:LENGTH|TYPE)|COOKIE)$/;
+        unless $tag =~ m/^CONTENT_(?:LENGTH|TYPE)$/;
 
     if ( exists $ENV{$tag} ) {
         $ENV{$tag} .= ", $value";
