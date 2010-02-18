@@ -1,3 +1,14 @@
+0.42 Thu Feb 18 10:13:11 PST 2010
+
+* Inline uri_unescape to drop URI::Escape which is the only non-core
+  dependency of this distribution. -- miyagawa
+
+* Do not special case COOKIE and sets Cookie header to HTTP_COOKIE. -- miyagawa
+
+  O'Reilly's WebSite server misuses COOKIE environment instead of
+  HTTP_COOKIE. We don't need to replicate that bug since
+  HTTP::Server::Simple is a server, not a CGI library like CGI.pm.
+    
 0.41_01 Tue Feb  2 12:08:15 PST 2010
 
 * Pluggable CGI class support based on a patch from NANIS
