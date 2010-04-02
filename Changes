@@ -1,3 +1,7 @@
+0.43
+
+* Patch to t/01live.t to prevent spurious win32 test failures.
+
 0.42 Thu Feb 18 10:13:11 PST 2010
 
 * Inline uri_unescape to drop URI::Escape which is the only non-core
