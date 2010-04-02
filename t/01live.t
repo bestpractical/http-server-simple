@@ -28,6 +28,7 @@ package main;
 
 my $DEBUG = 1 if @ARGV;
 
+my @pids    = ();
 my @classes = (qw(HTTP::Server::Simple SlowServer));
 for my $class (@classes) {
     run_server_tests($class);
@@ -61,6 +62,8 @@ for my $class (@classes) {
 
     is(kill(9,$pid),1,'Signaled 1 process successfully');
 }
+
+is( kill( 9, $_ ), 1, "Killed PID: $_" ) for @pids;
 
 # this function may look excessive, but hopefully will be very useful
 # in identifying common problems
@@ -119,6 +122,5 @@ sub run_server_tests {
     my $content=fetch("GET / HTTP/1.1", "");
 
     like($content, '/Congratulations/', "Returns a page");
-    is(kill(9,$pid),1,'Signaled 1 process successfully');
-    wait or die "couldn't wait for sub-process completion";
+    push @pids, $pid;
 }
