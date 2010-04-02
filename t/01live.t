@@ -41,7 +41,7 @@ for my $class (@classes) {
     my $s=HTTP::Server::Simple::CGI->new($PORT);
     $s->host("localhost");
     my $pid=$s->background();
-    diag("started server PID='$pid'");
+    diag("started server PID='$pid'") if ($ENV{'TEST_VERBOSE'});
     like($pid, '/^-?\d+$/', 'pid is numeric');
     select(undef,undef,undef,0.2); # wait a sec
     my $content=fetch("GET / HTTP/1.1", "");
