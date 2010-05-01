@@ -359,7 +359,7 @@ sub _process_request {
         # ( http://dev.catalyst.perl.org/changeset/5195, 5221 )
         
         my $remote_sockaddr = getpeername( $self->stdio_handle );
-        my ( undef, $iaddr ) = $remote_sockaddr ? sockaddr_in($remote_sockaddr) : (undef,undef);
+        my ( $iport, $iaddr ) = $remote_sockaddr ? sockaddr_in($remote_sockaddr) : (undef,undef);
         my $peeraddr = $iaddr ? ( inet_ntoa($iaddr) || "127.0.0.1" ) : '127.0.0.1';
         
         my ( $method, $request_uri, $proto ) = $self->parse_request;
@@ -384,6 +384,7 @@ sub _process_request {
             localport    => $self->port,
             peername     => $peeraddr,
             peeraddr     => $peeraddr,
+            peerport     => $iport,
         );
 
         # HTTP/0.9 didn't have any headers (I think)
@@ -486,6 +487,7 @@ of keys of this list.
   port         Received Port         80, 8080
   peername     Remote name           "200.2.4.5", "foo.com"
   peeraddr     Remote address        "200.2.4.5", "::1"
+  peerport     Remote port           42424
   localname    Local interface       "localhost", "myhost.com"
 
 =cut

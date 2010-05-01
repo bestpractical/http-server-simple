@@ -66,6 +66,7 @@ See the docs in L<HTTP::Server::Simple> for more detail.
     method       => "REQUEST_METHOD",
     peeraddr     => "REMOTE_ADDR",
     peername     => "REMOTE_HOST",
+    peerport     => "REMOTE_PORT",
     query_string => "QUERY_STRING",
 );
 

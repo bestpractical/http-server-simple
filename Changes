@@ -1,3 +1,7 @@
+0.43 Sat May  1 22:23:55 CST 2010
+
+* Support for getting REMOTE_PORT -- rgs
+
 0.42_01 Fri Apr  2 12:59:48 EDT 2010
 
 * Patch to t/01live.t to prevent spurious win32 test failures.
