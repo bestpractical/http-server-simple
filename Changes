@@ -1,3 +1,7 @@
+0.44 Mon Apr  4 16:59:59 EST 2011
+
+* Fix tests to run in a FreeBSD Jail - Tom Hukins [rt.cpan.org #49807]
+
 0.43 Sat May  1 22:23:55 CST 2010
 
 * Support for getting REMOTE_PORT -- rgs

@@ -2,7 +2,6 @@ use Test::More;
 use Socket;
 use strict;
 
-plan tests => 23;
 my $PORT = 40000 + int(rand(10000));
 
 my $host = gethostbyaddr(inet_aton('localhost'), AF_INET);
@@ -29,6 +28,15 @@ my %envvars=(
               QUERY_STRING => 'QUERY_STRING: ',
               PATH_INFO => 'PATH_INFO: /cgitest/PATH_INFO',
             );
+
+if ($^O eq 'freebsd' && `sysctl -n security.jail.jailed` == 1) {
+    delete @methods{qw(url server_name)};
+    delete @envvars{qw(SERVER_URL SERVER_NAME REMOTE_ADDR)};
+    plan tests => 18;
+}
+else {
+    plan tests => 23;
+}
 
 {
   my $server=CGIServer->new($PORT);
