@@ -32,10 +32,10 @@ my %envvars=(
 if ($^O eq 'freebsd' && `sysctl -n security.jail.jailed` == 1) {
     delete @methods{qw(url server_name)};
     delete @envvars{qw(SERVER_URL SERVER_NAME REMOTE_ADDR)};
-    plan tests => 18;
+    plan tests => 50;
 }
 else {
-    plan tests => 23;
+    plan tests => 55;
 }
 
 {
@@ -67,6 +67,36 @@ else {
           "Environment - $envvar"
         );
     select(undef,undef,undef,0.2); # wait a sec
+  }
+
+# extra tests for HTTP/1.1 absolute URLs
+
+  foreach my $verb ('GET', 'HEAD') {
+    foreach my $method (keys(%methods)) {
+      next unless defined $methods{$method};
+
+      my $method_value = $methods{$method};
+      $method_value =~ s/\bGET\b/$verb/;
+
+      like(
+            fetch("$verb http://localhost/cgitest/$method HTTP/1.1",""),
+            "/$method_value/",
+            "method (absolute URL) - $method"
+          );
+      select(undef,undef,undef,0.2); # wait a sec
+    }
+
+    foreach my $envvar (keys(%envvars)) {
+      (my $envvar_value = $envvars{$envvar});
+      $envvar_value =~ s/\bGET\b/$verb/;
+
+      like(
+            fetch("$verb http://localhost/cgitest/$envvar HTTP/1.1",""),
+            "/$envvar_value/",
+            "Environment (absolute URL) - $envvar"
+          );
+      select(undef,undef,undef,0.2); # wait a sec
+    }
   }
 
   like(

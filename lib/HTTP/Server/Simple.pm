@@ -608,6 +608,9 @@ sub parse_request {
     my $uri      = $2 || '';
     my $protocol = $3 || '';
 
+    # strip <scheme>://<host:port> out of HTTP/1.1 requests
+    $uri =~ s{^\w+://[^/]+/}{/};
+
     return ( $method, $uri, $protocol );
 }
 
