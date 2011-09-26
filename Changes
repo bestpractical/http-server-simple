@@ -1,3 +1,7 @@
+0.45_01 Thu Sep 22 10:10:41 EST 2011
+
+* Support full URIs as required by RFC2616 - penfold [rt.cpan.org #69445]
+
 0.44 Mon Apr  4 16:59:59 EST 2011
 
 * Fix tests to run in a FreeBSD Jail - Tom Hukins [rt.cpan.org #49807]
