@@ -709,7 +709,7 @@ and C<DELETE>.
 sub valid_http_method {
     my $self   = shift;
     my $method = shift or return 0;
-    $return $method =~ /^(?:GET|POST|HEAD|PUT|PATCH|DELETE)$/;
+    return $method =~ /^(?:GET|POST|HEAD|PUT|PATCH|DELETE)$/;
 }
 
 =head1 AUTHOR
