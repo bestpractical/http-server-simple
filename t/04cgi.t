@@ -32,10 +32,10 @@ my %envvars=(
 if ($^O eq 'freebsd' && `sysctl -n security.jail.jailed` == 1) {
     delete @methods{qw(url server_name)};
     delete @envvars{qw(SERVER_URL SERVER_NAME REMOTE_ADDR)};
-    plan tests => 50;
+    plan tests => 55;
 }
 else {
-    plan tests => 55;
+    plan tests => 60;
 }
 
 {
@@ -48,7 +48,19 @@ else {
   like($pid, '/^-?\d+$/', 'pid is numeric');
 
   select(undef,undef,undef,0.2); # wait a sec
-  like(fetch("GET / HTTP/1.1",""), '/NOFILE/', 'no file');
+  my @message_tests = (
+      [["GET / HTTP/1.1",""], '/NOFILE/', '[GET] no file'],
+      [["POST / HTTP/1.1","Content-Length: 0",""], '/NOFILE/', '[POST] no file'],
+      [["HEAD / HTTP/1.1",""], '/NOFILE/', '[HEAD] no file'],
+      [["PUT / HTTP/1.1","Content-Length: 0",""], '/NOFILE/', '[PUT] no file'],
+      [["DELETE / HTTP/1.1",""], '/NOFILE/', '[DELETE] no file'],
+      [["PATCH / HTTP/1.1","Content-Length: 0",""], '/NOFILE/', '[PATCH] no file'],
+  );
+  foreach my $message_test (@message_tests) {
+    my ($message, $expected, $description) = @$message_test;
+    like(fetch(@$message), $expected, $description);
+    select(undef,undef,undef,0.2); # wait a sec
+  }
 
   foreach my $method (keys(%methods)) {
     next unless defined $methods{$method};
