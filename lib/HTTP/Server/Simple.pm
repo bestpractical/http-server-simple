@@ -7,7 +7,7 @@ use Socket;
 use Carp;
 
 use vars qw($VERSION $bad_request_doc);
-$VERSION = '0.45_01';
+$VERSION = '0.45_02';
 
 =head1 NAME
 
@@ -394,7 +394,7 @@ sub _process_request {
         my $remote_sockaddr = getpeername( $self->stdio_handle );
         my $family = sockaddr_family($remote_sockaddr);
 
-        my ( $iport, $iaddr ) = $remote_sockaddr
+        my ( $iport, $iaddr ) = $remote_sockaddr 
                                 ? ( ($family == AF_INET6) ? sockaddr_in6($remote_sockaddr)
                                                           : sockaddr_in($remote_sockaddr) )
                                 : (undef,undef);

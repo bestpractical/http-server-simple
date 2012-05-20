@@ -49,7 +49,7 @@ for my $fam ( AF_INET, AF_INET6 ) {
     like($content, '/Congratulations/', "Returns a page");
 
     eval {
-	like(fetch($fam, "GET a bogus request"),
+	like(fetch($fam, "GET a bogus request"), 
 	     '/bad request/i',
 	     "knows what a request isn't");
     };
@@ -115,13 +115,13 @@ sub fetch {
         $response =~ s/\015\012/\n/g; 
         (close SOCK) || die "close(): $!";
         alarm 0;
-    }; 
+    };
     if ($@) {
       	return "[ERROR] $@";
     }
     else {
         return $response;
-    }    
+    }
 }
 
 sub run_server_tests {
