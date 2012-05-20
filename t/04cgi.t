@@ -1,3 +1,5 @@
+# -*- perl -*-
+
 use Test::More;
 use Socket;
 use strict;

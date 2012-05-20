@@ -124,15 +124,17 @@ could kill the server.
 
 =head1 METHODS
 
-=head2 HTTP::Server::Simple->new($port)
+=head2 HTTP::Server::Simple->new($port, $family)
 
 API call to start a new server.  Does not actually start listening
-until you call C<-E<gt>run()>.  If omitted, C<$port> defaults to 8080.
+until you call C<-E<gt>run()>.  If omitted, C<$port> defaults to 8080,
+and C<$family> defaults to L<Socket::AF_INET>.
+The alternative domain is L<Socket::AF_INET6>.
 
 =cut
 
 sub new {
-    my ( $proto, $port ) = @_;
+    my ( $proto, $port, $family ) = @_;
     my $class = ref($proto) || $proto;
 
     if ( $class eq __PACKAGE__ ) {
@@ -143,6 +145,7 @@ sub new {
     my $self = {};
     bless( $self, $class );
     $self->port( $port || '8080' );
+    $self->family( $family || AF_INET );
 
     return $self;
 }
@@ -151,7 +154,7 @@ sub new {
 =head2 lookup_localhost
 
 Looks up the local host's IP address, and returns it.  For most hosts,
-this is C<127.0.0.1>.
+this is C<127.0.0.1>, or possibly C<::1>.
 
 =cut
 
@@ -159,9 +162,14 @@ sub lookup_localhost {
     my $self = shift;
 
     my $local_sockaddr = getsockname( $self->stdio_handle );
-    my ( undef, $localiaddr ) = sockaddr_in($local_sockaddr);
-    $self->host( gethostbyaddr( $localiaddr, AF_INET ) || "localhost");
-    $self->{'local_addr'} = inet_ntoa($localiaddr) || "127.0.0.1";
+    my $local_family = sockaddr_family($local_sockaddr);
+    my ( undef, $localiaddr ) =
+        ($local_family == AF_INET6) ? sockaddr_in6($local_sockaddr)
+                                    : sockaddr_in($local_sockaddr);
+
+    $self->host( gethostbyaddr( $localiaddr, $local_family ) || "localhost");
+    $self->{'local_addr'} = Socket::inet_ntop($local_family, $localiaddr)
+                            || (($local_family == AF_INET6) ? "::1" : "127.0.0.1");
 }
 
 
@@ -177,6 +185,31 @@ sub port {
     my $self = shift;
     $self->{'port'} = shift if (@_);
     return ( $self->{'port'} );
+
+}
+
+=head2 family [NUMBER]
+
+Takes an optional address family for this server to use.  Valid values
+are Socket::AF_INET and Socket::AF_INET6.  All other values are silently
+changed into Socket::AF_INET for backwards compatibility with previous
+versions of the module.
+
+Returns the address family of the present listening socket.  (Defaults to
+Socket::AF_INET.)
+
+=cut
+
+sub family {
+    my $self = shift;
+    if (@_) {
+        if ($_[0] == AF_INET || $_[0] == AF_INET6) {
+            $self->{'family'} = shift;
+        } else {
+            $self->{'family'} = AF_INET;
+        }
+    }
+    return ( $self->{'family'} );
 
 }
 
@@ -359,8 +392,15 @@ sub _process_request {
         # ( http://dev.catalyst.perl.org/changeset/5195, 5221 )
         
         my $remote_sockaddr = getpeername( $self->stdio_handle );
-        my ( $iport, $iaddr ) = $remote_sockaddr ? sockaddr_in($remote_sockaddr) : (undef,undef);
-        my $peeraddr = $iaddr ? ( inet_ntoa($iaddr) || "127.0.0.1" ) : '127.0.0.1';
+        my $family = sockaddr_family($remote_sockaddr);
+
+        my ( $iport, $iaddr ) = $remote_sockaddr
+                                ? ( ($family == AF_INET6) ? sockaddr_in6($remote_sockaddr)
+                                                          : sockaddr_in($remote_sockaddr) )
+                                : (undef,undef);
+
+        my $loopback = ($family == AF_INET6) ? "::1" : "127.0.0.1";
+        my $peeraddr = $iaddr ? ( Socket::inet_ntop($family, $iaddr) || $loopback ) : $loopback;
         
         my ( $method, $request_uri, $proto ) = $self->parse_request;
         
@@ -653,18 +693,34 @@ sub setup_listener {
     my $self = shift;
 
     my $tcp = getprotobyname('tcp');
-    socket( HTTPDaemon, PF_INET, SOCK_STREAM, $tcp ) or croak "socket: $!";
+    my $sockaddr;
+    socket( HTTPDaemon, $self->{'family'}, SOCK_STREAM, $tcp )
+        or croak "socket: $!";
     setsockopt( HTTPDaemon, SOL_SOCKET, SO_REUSEADDR, pack( "l", 1 ) )
         or warn "setsockopt: $!";
-    bind( HTTPDaemon,
-        sockaddr_in(
-            $self->port(),
-            (   $self->host
-                ? inet_aton( $self->host )
-                : INADDR_ANY
-            )
-        )
-        )
+
+    if ($self->host) { # Explicit listening address
+        my ($err, @res) = Socket::getaddrinfo($self->host, $self->port, { family => $self->{'family'}, socktype => SOCK_STREAM } );
+        warn "$err!"
+          if ($err);
+        # we're binding only to the first returned address in the requested family.
+        while ($a = shift(@res)) {
+            # Be certain on the address family.
+            # TODO Accept AF_UNSPEC, reject SITE-LOCAL
+            next unless ($self->{'family'} == $a->{'family'});
+
+            # Use the first plausible address.
+            $sockaddr = $a->{'addr'};
+            last;
+        }
+    }
+    else { # Use the wildcard address
+        $sockaddr = ($self->{'family'} == AF_INET6)
+                        ? sockaddr_in6($self->port(), Socket::IN6ADDR_ANY)
+                        : sockaddr_in($self->port(), INADDR_ANY);
+    }
+
+    bind( HTTPDaemon, $sockaddr)
         or croak "bind to @{[$self->host||'*']}:@{[$self->port]}: $!";
     listen( HTTPDaemon, SOMAXCONN ) or croak "listen: $!";
 }
