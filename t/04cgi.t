@@ -181,7 +181,6 @@ sub fetch {
 {
   package CGIServer;
   use base qw(HTTP::Server::Simple::CGI);
-  use Env;
 
   sub handle_request {
     my $self=shift;
