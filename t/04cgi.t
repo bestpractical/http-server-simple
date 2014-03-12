@@ -34,10 +34,10 @@ my %envvars=(
 if ($^O eq 'freebsd' && `sysctl -n security.jail.jailed` == 1) {
     delete @methods{qw(url server_name)};
     delete @envvars{qw(SERVER_URL SERVER_NAME REMOTE_ADDR)};
-    plan tests => 46;
+    plan tests => 47;
 }
 else {
-    plan tests => 61;
+    plan tests => 62;
 }
 
 {
@@ -57,6 +57,7 @@ else {
       [["PUT / HTTP/1.1","Content-Length: 0",""], '/NOFILE/', '[PUT] no file'],
       [["DELETE / HTTP/1.1",""], '/NOFILE/', '[DELETE] no file'],
       [["PATCH / HTTP/1.1","Content-Length: 0",""], '/NOFILE/', '[PATCH] no file'],
+      [["OPTIONS / HTTP/1.1","Content-Length: 0",""], '/NOFILE/', '[OPTIONS] no file'],
   );
   foreach my $message_test (@message_tests) {
     my ($message, $expected, $description) = @$message_test;

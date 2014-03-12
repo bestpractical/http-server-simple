@@ -765,15 +765,15 @@ sub bad_request {
 
 Given a candidate HTTP method in $method, determine if it is valid.
 Override if, for example, you'd like to do some WebDAV.  The default
-implementation only accepts C<GET>, C<POST>, C<HEAD>, C<PUT>, C<PATCH>
-and C<DELETE>.
+implementation only accepts C<GET>, C<POST>, C<HEAD>, C<PUT>, C<PATCH>,
+C<DELETE> and C<OPTIONS>.
 
 =cut 
 
 sub valid_http_method {
     my $self   = shift;
     my $method = shift or return 0;
-    return $method =~ /^(?:GET|POST|HEAD|PUT|PATCH|DELETE)$/;
+    return $method =~ /^(?:GET|POST|HEAD|PUT|PATCH|DELETE|OPTIONS)$/;
 }
 
 =head1 AUTHOR
