@@ -37,7 +37,7 @@ if ($^O eq 'freebsd' && `sysctl -n security.jail.jailed` == 1) {
     plan tests => 55;
 }
 else {
-    plan tests => 60;
+    plan tests => 61;
 }
 
 {
@@ -57,6 +57,7 @@ else {
       [["PUT / HTTP/1.1","Content-Length: 0",""], '/NOFILE/', '[PUT] no file'],
       [["DELETE / HTTP/1.1",""], '/NOFILE/', '[DELETE] no file'],
       [["PATCH / HTTP/1.1","Content-Length: 0",""], '/NOFILE/', '[PATCH] no file'],
+      [["OPTIONS / HTTP/1.1","Content-Length: 0",""], '/NOFILE/', '[OPTIONS] no file'],
   );
   foreach my $message_test (@message_tests) {
     my ($message, $expected, $description) = @$message_test;
