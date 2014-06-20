@@ -34,10 +34,10 @@ my %envvars=(
 if ($^O eq 'freebsd' && `sysctl -n security.jail.jailed` == 1) {
     delete @methods{qw(url server_name)};
     delete @envvars{qw(SERVER_URL SERVER_NAME REMOTE_ADDR)};
-    plan tests => 55;
+    plan tests => 56;
 }
 else {
-    plan tests => 60;
+    plan tests => 61;
 }
 
 {
@@ -129,6 +129,13 @@ else {
       fetch("GET /cgitest/raw_cookie HTTP/1.0","Cookie: foo=bar",""),
       qr|foo=bar|,
       "uses HTTP_COOKIE",
+  );
+
+  like(
+      fetch("GET /cgitest/raw_cookie HTTP/1.0",
+            "Cookie: foo=bar\r\nCookie: baz=qux",""),
+      qr|foo=bar; baz=qux|,
+      "combines multiple cookies into HTTP_COOKIE"
   );
 
   is(kill(9,$pid),1,'Signaled 1 process successfully');

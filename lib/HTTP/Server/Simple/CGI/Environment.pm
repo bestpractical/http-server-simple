@@ -106,7 +106,7 @@ sub header {
         unless $tag =~ m/^CONTENT_(?:LENGTH|TYPE)$/;
 
     if ( exists $ENV{$tag} ) {
-        $ENV{$tag} .= ", $value";
+        $ENV{$tag} .= $tag eq 'HTTP_COOKIE' ? "; $value" : ", $value";
     }
     else {
         $ENV{$tag} = $value;
