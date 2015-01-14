@@ -5,8 +5,7 @@ use strict;
 use warnings;
 use HTTP::Server::Simple;
 
-use vars qw($VERSION %ENV_MAPPING);
-$VERSION = $HTTP::Server::Simple::VERSION;
+use vars qw(%ENV_MAPPING);
 
 my %clean_env = %ENV;
 
