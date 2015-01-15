@@ -770,8 +770,11 @@ sub valid_http_method {
 
 =head1 AUTHOR
 
-Copyright (c) 2004-2008 Jesse Vincent, <jesse@bestpractical.com>.
-All rights reserved.
+Best Practical Solutions, LLC E<lt>modules@bestpractical.comE<gt>
+
+=head1 CONTRIBUTORS
+
+Jesse Vincent, <jesse@bestpractical.com>. Original author.
 
 Marcus Ramberg <drave@thefeed.no> contributed tests, cleanup, etc
 
@@ -785,6 +788,8 @@ Example section by almut on perlmonks, suggested by Mark Fuller.
 There certainly are some. Please report them via rt.cpan.org
 
 =head1 LICENSE
+
+This software is Copyright (c) 2004-2015 Best Practical Solutions
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
