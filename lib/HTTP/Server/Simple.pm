@@ -163,12 +163,14 @@ sub lookup_localhost {
 
     my $local_sockaddr = getsockname( $self->stdio_handle );
     my $local_family = sockaddr_family($local_sockaddr);
-    my ( undef, $localiaddr ) =
-        ($local_family == AF_INET6) ? sockaddr_in6($local_sockaddr)
-                                    : sockaddr_in($local_sockaddr);
 
-    $self->host( gethostbyaddr( $localiaddr, $local_family ) || "localhost");
-    $self->{'local_addr'} = Socket::inet_ntop($local_family, $localiaddr)
+    my ($host_err,$local_host, undef) = Socket::getnameinfo($local_sockaddr,0);
+    warn $host_err if ($host_err);
+    $self->host( $local_host || "localhost");
+
+    my ($addr_err,$local_addr,undef) = Socket::getnameinfo($local_sockaddr,Socket::NI_NUMERICHOST);
+    warn $addr_err if ($addr_err);
+    $self->{'local_addr'} = $local_addr
                             || (($local_family == AF_INET6) ? "::1" : "127.0.0.1");
 }
 
@@ -400,7 +402,13 @@ sub _process_request {
                                 : (undef,undef);
 
         my $loopback = ($family == AF_INET6) ? "::1" : "127.0.0.1";
-        my $peeraddr = $iaddr ? ( Socket::inet_ntop($family, $iaddr) || $loopback ) : $loopback;
+        my $peeraddr = $loopback;
+        if ($iaddr) {
+            my ($host_err,$addr, undef) = Socket::getnameinfo($remote_sockaddr,Socket::NI_NUMERICHOST);
+            warn ($host_err) if $host_err;
+            $peeraddr = $addr || $loopback;
+        }
+
         
         my ( $method, $request_uri, $proto ) = $self->parse_request;
         
