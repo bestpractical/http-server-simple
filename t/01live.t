@@ -131,6 +131,8 @@ sub run_server_tests {
     is($s->family(), $fam, 'constructor set family properly');
     is($s->port(),$PORT,"Constructor set port correctly");
 
+    $s->host('localhost'); # otherwise we bind to * which doesn't work on all systems
+
     my $pid=$s->background();
     select(undef,undef,undef,0.2); # wait a sec
 
