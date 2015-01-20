@@ -1,5 +1,5 @@
 0.45_04
-* Fix compatibility for the IPv5 support in .45_02
+* Fix compatibility for the IPv6 support in .45_02
 * Hopefully improve the live tests
 
 0.45_03
