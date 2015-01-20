@@ -21,7 +21,7 @@ no_index:
     - t
 requires:
   CGI: 0
-  Socket: 0
+  Socket: 1.94
   Test::More: 0
 resources:
   license: http://dev.perl.org/licenses/

@@ -4,7 +4,7 @@ all_from('lib/HTTP/Server/Simple.pm');
 name('HTTP-Server-Simple');
 license('perl');
 requires(
-    Socket      => 0,
+    Socket      => 1.94,
     'Test::More'  => 0,
     CGI         => 0,
 );
