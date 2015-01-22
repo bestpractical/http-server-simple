@@ -86,7 +86,7 @@ sub fetch {
         my ($err, @res) = Socket::getaddrinfo($hostname, $port, { family => $family,
                                                                   socktype => $socktype,
                                                                   protocol => $proto });
-        die "getaddrinfo: $err"
+        die "getaddrinfo: $err operating on [$hostname] [$port] [$family] [$socktype] [$proto]"
           if ($err);
         while ($a = shift(@res)) {
           next unless ($family == $a->{'family'});
