@@ -1,3 +1,6 @@
+0.45_06
+* Further test iteration and diagnostics for smoke failures
+
 0.45_05
 * Test diagnostics for cpantester failures
 * Hopefully better localhost handling
