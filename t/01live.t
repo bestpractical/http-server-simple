@@ -40,26 +40,29 @@ for my $class (@classes) {
 for my $fam ( AF_INET, AF_INET6 ) {
     my $s=HTTP::Server::Simple::CGI->new($PORT, $fam);
     is($fam, $s->family(), 'family OK');
-    $s->host("localhost");
+    $s->host(get_localhost($fam));
     my $pid=$s->background();
     diag("started server PID='$pid'") if ($ENV{'TEST_VERBOSE'});
     like($pid, '/^-?\d+$/', 'pid is numeric');
     select(undef,undef,undef,0.2); # wait a sec
-    my $content=fetch($fam, "GET / HTTP/1.1", "");
-    like($content, '/Congratulations/', "Returns a page");
+    SKIP: {
+        skip "No localhost for $fam", 4 unless defined $s->host;
+        my $content=fetch($fam, "GET / HTTP/1.1", "");
+        like($content, '/Congratulations/', "Returns a page");
 
-    eval {
-	like(fetch($fam, "GET a bogus request"), 
-	     '/bad request/i',
-	     "knows what a request isn't");
-    };
-    fail("got exception in client: $@") if $@;
+        eval {
+        like(fetch($fam, "GET a bogus request"),
+             '/bad request/i',
+             "knows what a request isn't");
+        };
+        fail("got exception in client: $@") if $@;
 
-    like(fetch($fam, "GET / HTTP/1.1", ""), '/Congratulations/',
-	 "HTTP/1.1 request");
+        like(fetch($fam, "GET / HTTP/1.1", ""), '/Congratulations/',
+         "HTTP/1.1 request");
 
-    like(fetch($fam, "GET /"), '/Congratulations/',
-	 "HTTP/0.9 request");
+        like(fetch($fam, "GET /"), '/Congratulations/',
+         "HTTP/0.9 request");
+     }
 
     is(kill(9,$pid),1,'Signaled 1 process successfully');
 }
@@ -70,7 +73,7 @@ is( kill( 9, $_ ), 1, "Killed PID: $_" ) for @pids;
 # in identifying common problems
 sub fetch {
     my $family = shift;
-    my $hostname = "localhost";
+    my $hostname = get_localhost($family);
     my $port = $PORT;
     my $message = join "", map { "$_\015\012" } @_;
     my $timeout = 5;
@@ -131,7 +134,7 @@ sub run_server_tests {
     is($s->family(), $fam, 'constructor set family properly');
     is($s->port(),$PORT,"Constructor set port correctly");
 
-    my $localhost = gethostbyaddr(inet_aton('localhost'), $fam);
+    my $localhost = get_localhost($fam);
     $s->host($localhost); # otherwise we bind to * which doesn't work on all systems
 
     my $pid=$s->background();
@@ -139,8 +142,29 @@ sub run_server_tests {
 
     like($pid, '/^-?\d+$/', 'pid is numeric');
 
-    my $content=fetch($fam, "GET / HTTP/1.1", "");
+    SKIP: {
+        skip "No localhost defined for $fam", 1 unless defined $localhost;
+        my $content=fetch($fam, "GET / HTTP/1.1", "");
 
-    like($content, '/Congratulations/', "Returns a page");
+        like($content, '/Congratulations/', "Returns a page");
+    }
     push @pids, $pid;
+}
+
+{
+    my %localhost;
+sub get_localhost {
+    my $family = shift;
+
+    return $localhost{$family} if $localhost{$family};
+
+    if ($family == AF_INET) {
+        $localhost{$family} = gethostbyaddr(INADDR_LOOPBACK,$family);
+    } else  {
+        $localhost{$family} = gethostbyaddr(Socket::IN6ADDR_LOOPBACK,$family);
+    }
+    diag("Found localhost $localhost{$family} for $family");
+    return $localhost{$family};
+
+}
 }
