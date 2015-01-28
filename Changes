@@ -1,3 +1,6 @@
+0.45_07
+* Skip IPv6 tests in 01live.t on machines where IPv6 isn't configured
+
 0.45_06
 * Further test iteration and diagnostics for smoke failures
 
