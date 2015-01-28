@@ -1,15 +1,30 @@
 # -*- perl -*-
 
 use Socket;
-use Test::More tests => 34;
+use Test::More;
 use strict;
 
 # This script assumes that `localhost' will resolve to a local IP
 # address that may be bound to,
 
 my $PORT = 40000 + int(rand(10000));
-
-
+my $RUN_IPV6 = eval {
+	my $ipv6_host = get_localhost(AF_INET6);
+	socket my $sockh, Socket::PF_INET6(), SOCK_STREAM, 0 or die "Cannot socket(PF_INET6) - $!";
+	my ($err, @res) = Socket::getaddrinfo($ipv6_host, $PORT, { family => AF_INET6, socktype => SOCK_STREAM } );
+	diag $err if $err;
+	for my $r (@res) {
+		next unless ($r->{'family'} == AF_INET6);
+		bind $sockh, $r->{'addr'} or die "Cannot bind - $!";
+		last;
+	}
+};
+if ( $RUN_IPV6) {
+    plan tests => 34;
+} else {
+    diag("Skipping IPv6");
+    plan tests => 17;
+}
 use HTTP::Server::Simple;
 
 package SlowServer;
@@ -32,12 +47,13 @@ my @pids    = ();
 my @classes = (qw(HTTP::Server::Simple SlowServer));
 for my $class (@classes) {
     run_server_tests($class, AF_INET);
-    run_server_tests($class, AF_INET6);
+    run_server_tests($class, AF_INET6) if $RUN_IPV6;
     $PORT++; # don't reuse the port incase your bogus os doesn't release in time
 }
 
 
 for my $fam ( AF_INET, AF_INET6 ) {
+    next if ($fam == AF_INET6 && not $RUN_IPV6);
     my $s=HTTP::Server::Simple::CGI->new($PORT, $fam);
     is($fam, $s->family(), 'family OK');
     $s->host(get_localhost($fam));
@@ -163,7 +179,6 @@ sub get_localhost {
     } else  {
         $localhost{$family} = gethostbyaddr(Socket::IN6ADDR_LOOPBACK,$family);
     }
-    diag("Found localhost $localhost{$family} for $family");
     return $localhost{$family};
 
 }
