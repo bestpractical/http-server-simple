@@ -1,22 +1,26 @@
-0.45_07
+0.45_08 2015-01-29
+ - IPv6 skipping code always turned off tests, rather than just
+   skipping on bad hosts.
+
+0.45_07 2015-01-27T22:24Z
  - Skip IPv6 tests in 01live.t on machines where IPv6 isn't configured
 
-0.45_06
+0.45_06 2015-01-23T17:55Z
  - Further test iteration and diagnostics for smoke failures
 
-0.45_05
+0.45_05 2015-01-22T16:23Z
  - Test diagnostics for cpantester failures
  - Hopefully better localhost handling
 
-0.45_04
+0.45_04 2015-01-20T17:40Z
  - Fix compatibility for the IPv6 support in .45_02
  - Hopefully improve the live tests
 
-0.45_03
+0.45_03 2015-01-14T19:48Z
  - Remove useless VERSION from HTTP::Server::Simple::CGI and
    HTTP::Server::Simple::CGI::Environment
 
-0.45_02
+0.45_02 2012-05-20T18:15Z
  - Support for IPv6 - Daniel Kahn Gillmor [rt.cpan.org #61200]
 
 0.45_01 2011-09-22T10:10:41Z
@@ -46,8 +50,8 @@
  - HTTP header concatenation fixes from miyagawa
 
 0.40 2009-08-17T22:01:07Z
- - After a fork, we need to reset the random seed lest we have	duplicated
-   random numbers in both forks.
+ - After a fork, we need to reset the random seed lest we have	  
+   duplicated random numbers in both forks.
 
 0.39 2009-08-17T09:41:05Z
  - Added signature tests
@@ -57,7 +61,7 @@
 
 0.38_03 2009-04-11T18:47:29Z
  - Subject: [rt.cpan.org #44961] [PATCH] xdg reports select() is
-   problematic on win32 						    
+   problematic on win32 						 
 
 0.38_02 2009-04-10T20:57:19Z
  - Specify an HTTP version for our GETs should get escaping to wokr
