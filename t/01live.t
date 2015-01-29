@@ -18,6 +18,7 @@ my $RUN_IPV6 = eval {
 		bind $sockh, $r->{'addr'} or die "Cannot bind - $!";
 		last;
 	}
+    return 1;
 };
 if ( $RUN_IPV6) {
     plan tests => 34;
