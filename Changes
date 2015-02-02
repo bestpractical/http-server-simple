@@ -1,3 +1,6 @@
+0.50    2015-02-02
+  - All collected changes since 0.44
+
 0.45_08 2015-01-29
  - IPv6 skipping code always turned off tests, rather than just
    skipping on bad hosts.
