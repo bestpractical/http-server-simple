@@ -1,14 +1,15 @@
 
 package HTTP::Server::Simple::CGI;
 
+use 5.006;
 use base qw(HTTP::Server::Simple HTTP::Server::Simple::CGI::Environment);
 use strict;
 use warnings;
 
-use vars qw($default_doc $DEFAULT_CGI_INIT $DEFAULT_CGI_CLASS);
+our $default_doc;
 
-$DEFAULT_CGI_CLASS = "CGI";
-$DEFAULT_CGI_INIT = sub { require CGI; CGI::initialize_globals()};
+our $DEFAULT_CGI_CLASS = "CGI";
+our $DEFAULT_CGI_INIT  = sub { require CGI; CGI::initialize_globals()};
 
 
 =head1 NAME

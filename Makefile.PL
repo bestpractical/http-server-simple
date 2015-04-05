@@ -8,5 +8,6 @@ requires(
     'Test::More'  => 0,
     CGI         => 0,
 );
+repository('https://github.com/bestpractical/http-server-simple');
 
-WriteAll( sign => 1);
+WriteAll(meta => 1);
