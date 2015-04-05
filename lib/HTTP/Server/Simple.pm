@@ -1,13 +1,15 @@
+use 5.006;
 use strict;
 use warnings;
 
 package HTTP::Server::Simple;
+
 use FileHandle;
 use Socket;
 use Carp;
 
-use vars qw($VERSION $bad_request_doc);
-$VERSION = '0.51';
+our $VERSION = '0.51';
+our $bad_request_doc;
 
 =head1 NAME
 

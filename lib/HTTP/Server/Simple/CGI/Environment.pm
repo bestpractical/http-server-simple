@@ -1,11 +1,12 @@
 
 package HTTP::Server::Simple::CGI::Environment;
 
+use 5.006;
 use strict;
 use warnings;
 use HTTP::Server::Simple;
 
-use vars qw(%ENV_MAPPING);
+our %ENV_MAPPING;
 
 my %clean_env = %ENV;
 
