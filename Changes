@@ -1,3 +1,9 @@
+Revision history for Perl module HTTP::Server::Simple
+
+0.51    2015-04-05
+  - Added github repo to metadata
+  - Removed inc/ and META.yml from github, as they're generated.
+
 0.50    2015-02-02
   - All collected changes since 0.44
 

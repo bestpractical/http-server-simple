@@ -7,7 +7,7 @@ use Socket;
 use Carp;
 
 use vars qw($VERSION $bad_request_doc);
-$VERSION = '0.50';
+$VERSION = '0.51';
 
 =head1 NAME
 
