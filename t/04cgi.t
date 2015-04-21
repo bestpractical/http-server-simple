@@ -34,7 +34,7 @@ my %envvars=(
 if ($^O eq 'freebsd' && `sysctl -n security.jail.jailed` == 1) {
     delete @methods{qw(url server_name)};
     delete @envvars{qw(SERVER_URL SERVER_NAME REMOTE_ADDR)};
-    plan tests => 55;
+    plan tests => 45;
 }
 else {
     plan tests => 60;
