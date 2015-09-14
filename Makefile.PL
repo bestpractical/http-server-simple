@@ -9,4 +9,5 @@ requires(
     CGI         => 0,
 );
 
+repository('https://github.com/bestpractical/http-server-simple');
 WriteAll( sign => 1);
