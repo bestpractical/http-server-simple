@@ -25,4 +25,5 @@ requires:
   Test::More: 0
 resources:
   license: http://dev.perl.org/licenses/
-version: '0.50'
+  repository: https://github.com/bestpractical/http-server-simple
+version: '0.51'

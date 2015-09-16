@@ -1,3 +1,10 @@
+0.51 2015-09-16
+
+  - add OPTIONS as a valid method
+  - better compatibility with CGI.pm < 3.36
+  - fix tests for freebsd and IPv6
+  - repository info
+
 0.50    2015-02-02
   - All collected changes since 0.44
 
