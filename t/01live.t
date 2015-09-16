@@ -12,7 +12,7 @@ my $RUN_IPV6 = eval {
 	my $ipv6_host = get_localhost(AF_INET6);
 	socket my $sockh, Socket::PF_INET6(), SOCK_STREAM, 0 or die "Cannot socket(PF_INET6) - $!";
 	my ($err, @res) = Socket::getaddrinfo($ipv6_host, $PORT, { family => AF_INET6, socktype => SOCK_STREAM } );
-	diag $err if $err;
+	die $err if $err;
 	for my $r (@res) {
 		next unless ($r->{'family'} == AF_INET6);
 		bind $sockh, $r->{'addr'} or die "Cannot bind - $!";
