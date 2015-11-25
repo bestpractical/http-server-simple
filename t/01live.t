@@ -2,12 +2,13 @@
 
 use Socket;
 use Test::More;
+use Net::EmptyPort;
 use strict;
 
 # This script assumes that `localhost' will resolve to a local IP
 # address that may be bound to,
 
-my $PORT = 40000 + int(rand(10000));
+my $PORT = empty_port();
 my $RUN_IPV6 = eval {
 	my $ipv6_host = get_localhost(AF_INET6);
 	socket my $sockh, Socket::PF_INET6(), SOCK_STREAM, 0 or die "Cannot socket(PF_INET6) - $!";
