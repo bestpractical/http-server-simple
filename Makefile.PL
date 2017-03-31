@@ -1,3 +1,4 @@
+use lib '.';
 use inc::Module::Install;
 
 all_from('lib/HTTP/Server/Simple.pm');
