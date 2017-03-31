@@ -1,3 +1,6 @@
+0.52 2017-03-31
+  - Add . to lib in Makefile.PL to support perl 5.25.11
+
 0.51 2015-09-16
 
   - add OPTIONS as a valid method
