@@ -2,9 +2,10 @@
 
 use Test::More;
 use Socket;
+use Net::EmptyPort;
 use strict;
 
-my $PORT = 40000 + int(rand(10000));
+my $PORT = empty_port();
 
 my $host = gethostbyaddr(inet_aton('localhost'), AF_INET);
 

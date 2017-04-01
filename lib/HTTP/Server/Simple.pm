@@ -127,8 +127,8 @@ could kill the server.
 =head2 HTTP::Server::Simple->new($port, $family)
 
 API call to start a new server.  Does not actually start listening
-until you call C<-E<gt>run()>.  If omitted, C<$port> defaults to 8080,
-and C<$family> defaults to L<Socket::AF_INET>.
+until you call C<< $server->run() >>.  If omitted, C<$port> defaults 
+to 8080, and C<$family> defaults to L<Socket::AF_INET>.
 The alternative domain is L<Socket::AF_INET6>.
 
 =cut
@@ -384,8 +384,8 @@ sub _process_request {
 
         $self->stdio_handle(*STDIN) unless $self->stdio_handle;
 
- # Default to unencoded, raw data out.
- # if you're sending utf8 and latin1 data mixed, you may need to override this
+        # Default to unencoded, raw data out.
+        # if you're sending utf8 and latin1 data mixed, you may need to override this
         binmode STDIN,  ':raw';
         binmode STDOUT, ':raw';
 
@@ -665,7 +665,7 @@ sub parse_request {
 =head2 parse_headers
 
 Parses incoming HTTP headers from STDIN, and returns an arrayref of
-C<(header =E<gt> value)> pairs.  See L</headers> for possibilities on
+C<< (header => value) >> pairs.  See L</headers> for possibilities on
 how to inspect headers.
 
 =cut

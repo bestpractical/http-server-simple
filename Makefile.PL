@@ -9,6 +9,9 @@ requires(
     'Test::More'  => 0,
     CGI         => 0,
 );
+test_requires(
+    'Net::EmptyPort' => 0,
+);
 
 repository('https://github.com/bestpractical/http-server-simple');
 WriteAll( sign => 1);
