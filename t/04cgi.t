@@ -1,10 +1,27 @@
 # -*- perl -*-
 
+use IO::Socket::INET;
 use Test::More;
 use Socket;
 use strict;
 
-my $PORT = 40000 + int(rand(10000));
+my $PORT = do {
+    my $port = 40000;
+    my $found;
+    while ($port < 65535) {
+        my $sock = IO::Socket::INET->new(
+            Listen => 5,
+            LocalAddr => '127.0.0.1',
+            LocalPort => $port,
+            Proto     => 'tcp',
+            (($^O eq 'MSWin32') ? () : (ReuseAddr => 1)),
+        );
+        if ($sock) { $found++; last }
+        $port++;
+    }
+    die "Can't find empty port" unless $found;
+    $port;
+};
 
 my $host = gethostbyaddr(inet_aton('localhost'), AF_INET);
 

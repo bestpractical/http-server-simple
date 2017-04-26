@@ -1,5 +1,6 @@
 # -*- perl -*-
 
+use IO::Socket::INET;
 use Socket;
 use Test::More;
 use strict;
@@ -7,7 +8,24 @@ use strict;
 # This script assumes that `localhost' will resolve to a local IP
 # address that may be bound to,
 
-my $PORT = 40000 + int(rand(10000));
+my $PORT = do {
+    my $port = 40000;
+    my $found;
+    while ($port < 65535) {
+        my $sock = IO::Socket::INET->new(
+            Listen => 5,
+            LocalAddr => '127.0.0.1',
+            LocalPort => $port,
+            Proto     => 'tcp',
+            (($^O eq 'MSWin32') ? () : (ReuseAddr => 1)),
+        );
+        if ($sock) { $found++; last }
+        $port++;
+    }
+    die "Can't find empty port" unless $found;
+    $port;
+};
+
 my $RUN_IPV6 = eval {
 	my $ipv6_host = get_localhost(AF_INET6);
 	socket my $sockh, Socket::PF_INET6(), SOCK_STREAM, 0 or die "Cannot socket(PF_INET6) - $!";
