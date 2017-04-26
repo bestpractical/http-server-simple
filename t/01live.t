@@ -1,5 +1,6 @@
 # -*- perl -*-
 
+use IO::Socket::INET;
 use Socket;
 use Test::More;
 use strict;
