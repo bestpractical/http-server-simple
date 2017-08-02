@@ -144,7 +144,8 @@ sub new {
 
     my $self = {};
     bless( $self, $class );
-    $self->port( $port || '8080' );
+    $port = '8080' unless defined($port);
+    $self->port( $port );
     $self->family( $family || AF_INET );
 
     return $self;
@@ -180,6 +181,8 @@ sub lookup_localhost {
 Takes an optional port number for this server to listen on.
 
 Returns this server's port. (Defaults to 8080)
+
+When set to C<0>, the system will pick up a random available port.
 
 =cut
 
@@ -695,6 +698,9 @@ sub parse_headers {
 
 This routine binds the server to a port and interface.
 
+If the port was set to C<0>, it will let the system auto-assign a random available port,
+and update the L<port> value.
+
 =cut
 
 sub setup_listener {
@@ -730,6 +736,15 @@ sub setup_listener {
 
     bind( HTTPDaemon, $sockaddr)
         or croak "bind to @{[$self->host||'*']}:@{[$self->port]}: $!";
+
+    # get the port value if it was auto-assigned
+    if ( $self->port == 0 ) {
+        my ( $port, $iaddr ) = ( $self->{'family'} == AF_INET6 )
+                        ? sockaddr_in6( getsockname(HTTPDaemon) )
+                        : sockaddr_in( getsockname(HTTPDaemon) );
+        $self->port($port);
+    }
+
     listen( HTTPDaemon, SOMAXCONN ) or croak "listen: $!";
 }
 
