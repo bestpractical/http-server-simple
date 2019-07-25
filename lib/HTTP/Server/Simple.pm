@@ -312,6 +312,9 @@ User-overridable method. If you set it to a L<Net::Server> subclass,
 that subclass is used for the C<run> method.  Otherwise, a minimal
 implementation is used as default.
 
+With the minimal implementation, the master listening socket
+filehandle is C<HTTP::Server::Simple::HTTPDaemon>.
+
 =cut
 
 sub net_server {undef}
